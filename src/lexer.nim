@@ -7,6 +7,7 @@ from utils import nil
 
 type
     Token* = object
+        characters: seq[Character]
         lexeme*: string
         kind*: tokens.TokenKind
 
@@ -50,16 +51,17 @@ proc peek(lex: var Lexer): Character =
     # Returns the current char without moving to the next one
     result = lex.source[lex.current]
 
-proc addToken(lex: var Lexer, s: string, token_kind: TokenKind) =
+proc addToken(lex: var Lexer, s: string, token_kind: TokenKind, characters: seq[Character]) =
     lex.tokens.add(
         Token(
             lexeme: s,
-            kind: token_kind
+            kind: token_kind,
+            characters: characters
         )
     )
 
-proc addToken(lex: var Lexer, c: char, token_kind: TokenKind) =
-    addToken(lex, $c, token_kind)
+proc addToken(lex: var Lexer, c: char, token_kind: TokenKind, characters: seq[Character]) =
+    addToken(lex, $c, token_kind, characters)
 
 proc isIdentifier(c: char): bool =
     return c.isAlphaNumeric or c == '_'
@@ -68,23 +70,23 @@ proc scanToken(lex: var Lexer) =
     var c: Character = lex.advance()
     case c.cargo:
         of '(':
-            lex.addToken(c.cargo, tk_left_paren)
+            lex.addToken(c.cargo, tk_left_paren, @[c])
         of ')':
-            lex.addToken(c.cargo, tk_right_paren)
+            lex.addToken(c.cargo, tk_right_paren, @[c])
         of '{':
-            lex.addToken(c.cargo, tk_left_brace)
+            lex.addToken(c.cargo, tk_left_brace, @[c])
         of '}':
-            lex.addToken(c.cargo, tk_right_brace)
+            lex.addToken(c.cargo, tk_right_brace, @[c])
         of ',':
-            lex.addToken(c.cargo, tk_comma)
+            lex.addToken(c.cargo, tk_comma, @[c])
         of '.':
-            lex.addToken(c.cargo, tk_period)
+            lex.addToken(c.cargo, tk_period, @[c])
         of '-':
-            lex.addToken(c.cargo, tk_minus)
+            lex.addToken(c.cargo, tk_minus, @[c])
         of '+':
-            lex.addToken(c.cargo, tk_plus)
+            lex.addToken(c.cargo, tk_plus, @[c])
         of '*':
-            lex.addToken(c.cargo, tk_star)
+            lex.addToken(c.cargo, tk_star, @[c])
         of '/':
             if lex.match('/'):
                 # This is a comment
@@ -92,37 +94,39 @@ proc scanToken(lex: var Lexer) =
                 while (not lex.isAtEnd() and lex.peek().cargo != '\n'):
                     discard lex.advance()
             else:
-                lex.addToken(c.cargo, tk_slash)
+                lex.addToken(c.cargo, tk_slash, @[c])
         of ';':
-            lex.addToken(c.cargo, tk_semicolon)
+            lex.addToken(c.cargo, tk_semicolon, @[c])
         of ':':
-            lex.addToken(c.cargo, tk_colon)
+            lex.addToken(c.cargo, tk_colon, @[c])
         of '\'':
-            lex.addToken(c.cargo, tk_singlequote)
+            lex.addToken(c.cargo, tk_singlequote, @[c])
         of '\"':
-            lex.addToken(c.cargo, tk_doublequote)
+            lex.addToken(c.cargo, tk_doublequote, @[c])
         of '=':
-            lex.addToken(c.cargo, tk_equal)
+            lex.addToken(c.cargo, tk_equal, @[c])
         of '\n':
-            lex.addToken(c.cargo, tk_newline)
+            lex.addToken(c.cargo, tk_newline, @[c])
         of ' ':
-            lex.addToken(c.cargo, tk_space)
+            lex.addToken(c.cargo, tk_space, @[c])
         of '\r', '\t':
             discard
         else:
             if isAlphaNumeric(c.cargo):
                 var s: string
+                var characters: seq[Character] = @[]
                 s.add(c.cargo)
                 while ( not lex.isAtEnd() and lex.peek().cargo.isIdentifier ):
                     c = lex.advance()
                     s.add(c.cargo)
+                    characters.add(c)
                 if keywords.contains(s):
                     var tk = keywords[s]
-                    lex.addToken(s, tk)
+                    lex.addToken(s, tk, characters)
                 elif s.isDigit():
-                    lex.addToken(s, tk_number)
+                    lex.addToken(s, tk_number, characters)
                 else:
-                    lex.addToken(s, tk_string)
+                    lex.addToken(s, tk_string, characters)
             else:
                 let error = &"Unable to parse:\n  line  col c index\n{c}\n"
                 raise newException(LexerError, error)
@@ -133,7 +137,8 @@ proc scanTokens*(lex: var Lexer): seq[Token] =
     lex.tokens.add(
         Token(
             kind: tk_eof,
-            lexeme: "\0"
+            lexeme: "\0",
+            characters: @[],
         )
     )
     return lex.tokens

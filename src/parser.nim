@@ -77,15 +77,28 @@ proc parse_clock(p: var Parser): Clock =
 
         o.add(lvalue, newJString(rvalue))
 
-    let c = Clock(kind: "clock", attributes: o)
+    let c = Clock(attributes: o)
     return c
+
+proc parse_module(p: var Parser): Module =
+    assert p.previous().kind == tk_module
+
+    let t_module = p.advance(tk_newline, tk_space)
+    let module = t_module.lexeme
+
+    let t = p.advance(tk_newline, tk_space)
+
+    if t.kind == tk_semicolon:
+        var o = newJObject()
+        let m = Module(name: module, attributes: o)
+        return m
+    else:
+        raise newException(ParserError, "Failed to parse module.")
 
 
 proc walk(p: var Parser) =
 
-    var objects: seq[ref GLD]
-
-    echo objects
+    var objects: seq[GLD] = @[]
 
     while not p.isAtEnd():
         var t = p.advance(tk_newline, tk_space)
@@ -95,7 +108,13 @@ proc walk(p: var Parser) =
             # echo node
             objects.add(node)
 
-    # echo ast.objects
+        if t.kind == tk_module:
+            var node = p.parse_module()
+            # echo node
+            objects.add(node)
+
+    echo objects
+
 
 if isMainModule:
 
