@@ -81,6 +81,8 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(tk_colon)
         of '\'':
             lex.addToken(tk_singlequote)
+        of '\"':
+            lex.addToken(tk_doublequote)
         of '=':
             lex.addToken(tk_equal)
         of '\n':

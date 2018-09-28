@@ -17,6 +17,7 @@ type
         tk_star,
         tk_equal,
         tk_singlequote,
+        tk_doublequote,
         # Literals.
         tk_identifier,
         tk_string,
