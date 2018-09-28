@@ -24,3 +24,5 @@ type
         tk_number,
         # glm constructs
         tk_clock
+        tk_object
+        tk_module
