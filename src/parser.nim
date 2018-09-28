@@ -1,9 +1,9 @@
 import json
 import strutils
 
-import ./lexer
-import ./tokens
-import ./ast
+import lexer
+import tokens
+import ast
 
 type
     Parser* = object
@@ -56,38 +56,46 @@ proc parse_rvalue(p: var Parser): string =
     var rvalue : seq[string]
 
     while p.peek().kind != tk_semicolon:
-      rvalue.add( p.advance().lexeme )
+        rvalue.add( p.advance().lexeme )
+
+    p.advance()
 
     return join(rvalue)
 
-proc parse_clock(p: var Parser) =
+proc parse_clock(p: var Parser): Clock =
     assert p.previous().kind == tk_clock
     assert p.advance(tk_newline, tk_space).kind == tk_left_brace
 
-    let t = p.advance(tk_newline, tk_space)
-    while t.kind != "tk_right_brace":
+    var o = newJObject()
+
+    while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+
+        var t = p.previous()
+        assert p.match(tk_space)
         let lvalue = t.lexeme
         let rvalue = p.parse_rvalue()
 
-        if lvalue == "timestamp":
-            # TODO: parse rvalue timestamp
-            discard
+        o.add(lvalue, newJString(rvalue))
 
-        var o = newJObject()
-        o.add(lvalue, rvalue)
+    let c = Clock(kind: "clock", attributes: o)
+    return c
 
 
 proc walk(p: var Parser) =
 
-    while not p.isAtEnd():
-        var t = p.advance()
+    var objects: seq[ref GLD]
 
-        if t.kind == tk_newline:
-            continue
+    echo objects
+
+    while not p.isAtEnd():
+        var t = p.advance(tk_newline, tk_space)
 
         if t.kind == tk_clock:
-            p.parse_clock()
+            var node = p.parse_clock()
+            # echo node
+            objects.add(node)
 
+    # echo ast.objects
 
 if isMainModule:
 
