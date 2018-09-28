@@ -3,6 +3,7 @@ type
         # Single-character tokens.
         tk_eof,
         tk_newline,
+        tk_space,
         tk_left_paren,
         tk_right_paren,
         tk_left_brace,
@@ -18,11 +19,14 @@ type
         tk_equal,
         tk_singlequote,
         tk_doublequote,
+        # keywords
+        tk_class,
+        tk_object,
+        tk_false,
+        tk_true,
+        tk_clock,
+        tk_module,
         # Literals.
         tk_identifier,
         tk_string,
         tk_number,
-        # glm constructs
-        tk_clock
-        tk_object
-        tk_module

@@ -7,8 +7,8 @@ from utils import nil
 
 type
     Token* = object
-        lexeme: string
-        kind: tokens.TokenKind
+        lexeme*: string
+        kind*: tokens.TokenKind
 
     Lexer* = object
         source*: seq[Character]
@@ -105,7 +105,9 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(c.cargo, tk_equal)
         of '\n':
             lex.addToken(c.cargo, tk_newline)
-        of '\r', '\t', ' ':
+        of ' ':
+            lex.addToken(c.cargo, tk_space)
+        of '\r', '\t':
             discard
         else:
             if isAlphaNumeric(c.cargo):
@@ -125,14 +127,13 @@ proc scanToken(lex: var Lexer) =
                 let error = &"Unable to parse:\n  line  col c index\n{c}\n"
                 raise newException(LexerError, error)
 
-proc scanTokens(lex: var Lexer): seq[Token] =
+proc scanTokens*(lex: var Lexer): seq[Token] =
     while not lex.isAtEnd():
         lex.scanToken()
-        echo lex.source[lex.current]
     lex.tokens.add(
         Token(
             kind: tk_eof,
-            lexeme: ""
+            lexeme: "\0"
         )
     )
     return lex.tokens
