@@ -27,11 +27,9 @@ proc reportError(t: Token) =
     else:
         echo "^".align(start_index)
 
-
     # echo source_text[start_index..end_index]
 
-
-proc initParser(data: string): Parser =
+proc initParser*(data: string): Parser =
     var l = initLexer(data)
     discard l.scanTokens()
     var p = Parser(
@@ -159,7 +157,7 @@ proc parse_object(p: var Parser): Object=
         raise newException(ParserError, "Failed to parse object.")
 
 
-proc walk(p: var Parser) =
+proc walk*(p: var Parser): seq[GLD] =
 
     var objects: seq[GLD] = @[]
 
@@ -181,13 +179,12 @@ proc walk(p: var Parser) =
             # echo node
             objects.add(node)
 
-
-    echo objects
+    return objects
 
 
 if isMainModule:
 
     var p = initParser(readFile("./tests/data/4node.glm"))
-    p.walk()
+    discard p.walk()
 
 

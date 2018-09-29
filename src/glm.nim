@@ -3,12 +3,19 @@
 from utils import nil
 from logging as logger import nil
 
+import ./parser
+import ./ast
+
 proc read_string(file: string): string =
     let x = readFile(file)
     return x
 
 proc parse(file: string): string =
-    let x = read_string(file)
+    var x = read_string(file)
+    var p = initParser(x)
+    var l = p.walk()
+    for g in l:
+        echo g
     return x
 
 proc main*(path_to_file: string): int =
