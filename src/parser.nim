@@ -124,6 +124,41 @@ proc parse_module(p: var Parser): Module =
         raise newException(ParserError, "Failed to parse module.")
 
 
+proc parse_object(p: var Parser): Object=
+    assert p.previous().kind == tk_object
+
+    let t_object = p.advance(tk_newline, tk_space)
+    var object_name = t_object.lexeme
+
+    if p.peek().kind == tk_colon:
+        p.advance()
+        object_name = object_name & ":" & p.advance().lexeme
+
+    let t = p.advance(tk_space, tk_newline)
+
+    if t.kind == tk_semicolon:
+        var o = newJObject()
+        let m = Object(name: object_name, attributes: o)
+        return m
+    elif t.kind == tk_left_brace:
+        var o = newJObject()
+
+        while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+
+            var t = p.previous()
+            assert p.match(tk_space)
+            let lvalue = t.lexeme
+            let rvalue = p.parse_rvalue()
+
+            o.add(lvalue, newJString(rvalue))
+
+        let m = Object(name: object_name, attributes: o)
+        return m
+    else:
+        reportError(t)
+        raise newException(ParserError, "Failed to parse object.")
+
+
 proc walk(p: var Parser) =
 
     var objects: seq[GLD] = @[]
@@ -140,6 +175,12 @@ proc walk(p: var Parser) =
             var node = p.parse_module()
             # echo node
             objects.add(node)
+
+        if t.kind == tk_object:
+            var node = p.parse_object()
+            # echo node
+            objects.add(node)
+
 
     echo objects
 

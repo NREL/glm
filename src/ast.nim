@@ -9,7 +9,8 @@ type
     Clock* = ref object of GLD
     Module* = ref object of GLD
         name*: string
-    Node* = ref object of GLD
+    Object* = ref object of GLD
+        name*: string
 
     AST* = object
         objects*: seq[GLD]
@@ -18,9 +19,9 @@ proc `$`*(p: GLD): string =
     if p of Module:
         var p = cast[Module](p)
         &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
-    elif p of Node:
-        var p = cast[Node](p)
-        &"<{p.type}(attr: {p.attributes.len})>"
+    elif p of Object:
+        var p = cast[Object](p)
+        &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
     elif p of Clock:
         var p = cast[Clock](p)
         &"<{p.type}(attr: {p.attributes.len})>"
