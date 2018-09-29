@@ -1,6 +1,5 @@
 from logging import nil
 
-
 proc initLogger() =
     var L = logging.newConsoleLogger()
     logging.addHandler(L)

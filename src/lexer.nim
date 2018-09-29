@@ -7,7 +7,7 @@ from utils import nil
 
 type
     Token* = object
-        characters: seq[Character]
+        characters*: seq[Character]
         lexeme*: string
         kind*: tokens.TokenKind
 
@@ -27,6 +27,9 @@ const
      "clock"  : tk_clock,
      "module" : tk_module,
   }.toTable
+
+proc `$`*(t: Token): string =
+    &"<Token(\"{t.lexeme}\", {t.kind})>"
 
 proc advance(lex: var Lexer): Character =
     result = lex.source[lex.current]

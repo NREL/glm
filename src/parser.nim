@@ -1,5 +1,6 @@
 import json
 import strutils
+import strformat
 
 import lexer
 import tokens
@@ -10,6 +11,25 @@ type
         current*: int
         tokens*: seq[Token]
     ParserError = object of Exception
+
+proc reportError(t: Token) =
+
+    let line_index= t.characters[0].line_index
+    var source_text = t.characters[0].source_text.splitLines()[line_index - 1]
+
+    var start_index = t.characters[0].column_index
+    let end_index = t.characters[^1].column_index
+
+    echo &"Parsing error on line: {line_index}"
+    echo source_text
+    if start_index != end_index:
+        echo "^".align(start_index-1) & "^".repeat(end_index - start_index + 1)
+    else:
+        echo "^".align(start_index)
+
+
+    # echo source_text[start_index..end_index]
+
 
 proc initParser(data: string): Parser =
     var l = initLexer(data)
@@ -33,11 +53,18 @@ proc advance(p: var Parser, ignore: varargs[TokenKind]): Token {.discardable.} =
     if ignore.contains(result.kind):
         result = p.advance(ignore)
 
+proc expect(p: var Parser, kind: TokenKind): Token {.discardable.} =
+    let t = p.advance(tk_space)
+    if t.kind == kind:
+        return t
+    else:
+        reportError(t)
+        raise newException(ParserError, &"Expected {kind}, but got {t.lexeme}")
+
 proc check(p: Parser, kind: TokenKind): bool =
     if p.isAtEnd():
         return false
     return p.peek().kind == kind
-
 
 proc match(p: var Parser, types: varargs[TokenKind]): bool =
     for kind in types:
@@ -46,16 +73,13 @@ proc match(p: var Parser, types: varargs[TokenKind]): bool =
         return true
     return false
 
-
-proc consumeMatching(p: var Parser, kind: TokenKind, message: string): Token =
-    if p.check(kind):
-        return p.advance()
-    raise newException(ParserError, message)
-
 proc parse_rvalue(p: var Parser): string =
     var rvalue : seq[string]
 
     while p.peek().kind != tk_semicolon:
+        if p.peek().kind == tk_newline:
+            reportError(p.peek())
+            raise newException(ParserError, "Unexpected newline character. Expected semicolon.")
         rvalue.add( p.advance().lexeme )
 
     p.advance()
@@ -64,7 +88,7 @@ proc parse_rvalue(p: var Parser): string =
 
 proc parse_clock(p: var Parser): Clock =
     assert p.previous().kind == tk_clock
-    assert p.advance(tk_newline, tk_space).kind == tk_left_brace
+    p.expect(tk_left_brace)
 
     var o = newJObject()
 
@@ -92,7 +116,11 @@ proc parse_module(p: var Parser): Module =
         var o = newJObject()
         let m = Module(name: module, attributes: o)
         return m
+    elif t.kind == tk_left_brace:
+        reportError(t)
+        raise newException(ParserError, "Not implemented")
     else:
+        reportError(t)
         raise newException(ParserError, "Failed to parse module.")
 
 
