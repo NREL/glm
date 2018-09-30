@@ -33,7 +33,7 @@ proc reportError*(c: Character) =
 
     var start_index = c.column_index
 
-    echo &"Parsing error on line: {line_index}"
+    echo &"Unknown symbol on line: {line_index}"
     echo source_text
     let ntabs = source_text[0..start_index].count('\t')
     echo "^".align((ntabs * 7) + start_index + 1)

@@ -127,6 +127,32 @@ proc parse_module(p: var Parser): Module =
         reportError(t)
         raise newException(ParserError, "Failed to parse module.")
 
+proc parse_class(p: var Parser): Class=
+    assert p.previous().kind == tk_class
+
+    let t_class= p.advance(tk_newline, tk_space)
+    var class_name = t_class.lexeme
+
+    let t = p.advance(tk_space, tk_newline)
+
+    if t.kind == tk_left_brace:
+        var o = newJObject()
+        var c = Class(name: class_name, attributes: o)
+
+        while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+            var t = p.previous()
+            assert p.match(tk_space)
+            let lvalue = t.lexeme
+            let rvalue = p.parse_rvalue()
+            o.add(lvalue, newJString(rvalue))
+
+        p.ignore(tk_semicolon)
+
+        return c
+    else:
+        reportError(t)
+        raise newException(ParserError, fmt"Failed to parse class. Expected {{ but found {t.lexeme}")
+
 
 proc parse_object(p: var Parser): Object=
     assert p.previous().kind == tk_object
@@ -192,6 +218,14 @@ proc parse_schedule(p: var Parser): Schedule =
         reportError(t)
         raise newException(ParserError, "Failed to parse schedule.")
 
+proc parse_include(p: var Parser): Include =
+    assert p.previous().kind == tk_hash
+    let t_include_type = p.advance(tk_newline, tk_space)
+    p.expect(tk_space)
+    p.advance(tk_newline, tk_space)
+    var rvalue = p.parse_rvalue()
+    let d = Include(value: rvalue)
+    return d
 
 proc parse_directive(p: var Parser): Directive =
     assert p.previous().kind == tk_hash
@@ -222,6 +256,10 @@ proc parse_definition(p: var Parser): Definition =
         raise newException(ParserError, "Failed to parse definition.")
 
 proc walk*(p: var Parser) =
+    # TODO: support gui
+    # TODO: support custom classes? Might require writing a C/CPP parser!
+    # TODO: support intrinsic objects?
+    # TODO: support nested configuration objects
 
     while not p.isAtEnd():
         var t = p.advance(tk_newline, tk_space)
@@ -249,6 +287,14 @@ proc walk*(p: var Parser) =
         elif t.kind == tk_hash and p.peek().kind == tk_definition:
             var node = p.parse_definition()
             p.ast.definitions.add(node)
+
+        elif t.kind == tk_hash and p.peek().kind == tk_include:
+            var node = p.parse_include()
+            p.ast.includes.add(node)
+
+        elif t.kind == tk_class:
+            var node = p.parse_class()
+            p.ast.classes.add(node)
 
         elif t.kind == tk_eof:
             break

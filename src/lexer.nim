@@ -29,6 +29,7 @@ const
      "set"     : tk_directive,
      "define"  : tk_definition,
      "schedule": tk_schedule,
+     "include" : tk_include,
   }.toTable
 
 proc `$`*(t: Token): string =
@@ -50,7 +51,7 @@ proc reportError*(t: Token) =
     let end_index = t.characters[^1].column_index
     var ntabs = source_text[0..start_index].count('\t')
 
-    echo &"Parsing error on line: {line_index}"
+    echo &"Error on line: {line_index}"
     echo source_text
     if start_index != end_index:
         echo "^".align( (ntabs * 7) + start_index + 1 ) & "^".repeat( end_index - start_index )
@@ -114,6 +115,10 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(c.cargo, tk_left_brace, @[c])
         of '}':
             lex.addToken(c.cargo, tk_right_brace, @[c])
+        of '[':
+            lex.addToken(c.cargo, tk_left_bracket, @[c])
+        of ']':
+            lex.addToken(c.cargo, tk_right_bracket, @[c])
         of ',':
             lex.addToken(c.cargo, tk_comma, @[c])
         of '.':
@@ -122,12 +127,26 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(c.cargo, tk_minus, @[c])
         of '+':
             lex.addToken(c.cargo, tk_plus, @[c])
+        of '^':
+            lex.addToken(c.cargo, tk_caret, @[c])
         of '|':
             lex.addToken(c.cargo, tk_pipe, @[c])
         of '*':
             lex.addToken(c.cargo, tk_star, @[c])
+        of '%':
+            lex.addToken(c.cargo, tk_percent, @[c])
         of '#':
             lex.addToken(c.cargo, tk_hash, @[c])
+        of '$':
+            lex.addToken(c.cargo, tk_dollar, @[c])
+        of '<':
+            lex.addToken(c.cargo, tk_left_triangle_bracket, @[c])
+        of '>':
+            lex.addToken(c.cargo, tk_right_triangle_bracket, @[c])
+        of '?':
+            lex.addToken(c.cargo, tk_question, @[c])
+        of '\\':
+            lex.addToken(c.cargo, tk_backslash, @[c])
         of '/':
             if lex.peek().cargo == '/' and lex.previous(2).cargo != ':':
                 # This is a comment

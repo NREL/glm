@@ -11,11 +11,14 @@ type
         name*: string
         attributes*: JsonNode
     Include* = ref object of GLD
-        name*: string
+        value*: string
     Object* = ref object of GLD
         name*: string
         attributes*: JsonNode
         children*: seq[Object]
+    Class* = ref object of GLD
+        name*: string
+        attributes*: JsonNode
     Directive* = ref object of GLD
         name*: string
         value*: string
@@ -31,6 +34,7 @@ type
         includes*: seq[Include]
         modules*: seq[Module]
         objects*: seq[Object]
+        classes*: seq[Class]
         directives*: seq[Directive]
         definitions*: seq[Definition]
         schedules*: seq[Schedule]
@@ -45,6 +49,9 @@ proc `$`*(p: GLD): string =
     elif p of Object:
         var p = cast[Object](p)
         &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
+    elif p of Class:
+        var p = cast[Class](p)
+        &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
     elif p of Clock:
         var p = cast[Clock](p)
         &"<{p.type}(attr: {p.attributes.len})>"
@@ -56,7 +63,7 @@ proc `$`*(p: GLD): string =
         &"<{p.type}(name: {p.name}, value: {p.value})>"
     elif p of Include:
         var p = cast[Include](p)
-        &"<{p.type}(name: {p.name})>"
+        &"<{p.type}(value: {p.value})>"
     elif p of Schedule:
         var p = cast[Schedule](p)
         &"<{p.type}(name: {p.name})>"
@@ -80,7 +87,7 @@ proc toJson(m: Module): JsonNode =
 
 proc toJson(i: Include): JsonNode =
     var gldJObject = newJObject()
-    gldJObject.add("name", newJString(i.name))
+    gldJObject.add("value", newJString(i.value))
     return gldJObject
 
 proc toJson(d: Directive): JsonNode =
@@ -97,8 +104,9 @@ proc toJson(d: Definition): JsonNode =
 
 proc toJson(c: Clock): JsonNode =
     var gldJObject = newJObject()
-    for k, v in c.attributes:
-        gldJObject.add(k, v)
+    if not c.isNil:
+        for k, v in c.attributes:
+            gldJObject.add(k, v)
     return gldJObject
 
 proc toJson(d: Schedule): JsonNode =
