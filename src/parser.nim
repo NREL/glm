@@ -10,6 +10,7 @@ type
     Parser* = object
         current*: int
         tokens*: seq[Token]
+        ast*: AST
     ParserError = object of Exception
 
 proc reportError(t: Token) =
@@ -34,7 +35,13 @@ proc initParser*(data: string): Parser =
     discard l.scanTokens()
     var p = Parser(
         current: 0,
-        tokens: l.tokens
+        tokens: l.tokens,
+        ast: AST(
+            includes: @[],
+            modules: @[],
+            objects: @[],
+            clock: nil,
+        )
     )
     return p
 
@@ -82,7 +89,7 @@ proc parse_rvalue(p: var Parser): string =
 
     p.advance()
 
-    return join(rvalue)
+    return join(rvalue).strip(chars={'\'', '"', ' '})
 
 proc parse_clock(p: var Parser): Clock =
     assert p.previous().kind == tk_clock
@@ -157,34 +164,27 @@ proc parse_object(p: var Parser): Object=
         raise newException(ParserError, "Failed to parse object.")
 
 
-proc walk*(p: var Parser): seq[GLD] =
-
-    var objects: seq[GLD] = @[]
+proc walk*(p: var Parser) =
 
     while not p.isAtEnd():
         var t = p.advance(tk_newline, tk_space)
 
         if t.kind == tk_clock:
             var node = p.parse_clock()
-            # echo node
-            objects.add(node)
+            p.ast.clock = node
 
         if t.kind == tk_module:
             var node = p.parse_module()
-            # echo node
-            objects.add(node)
+            p.ast.modules.add(node)
 
         if t.kind == tk_object:
             var node = p.parse_object()
-            # echo node
-            objects.add(node)
-
-    return objects
-
+            p.ast.objects.add(node)
 
 if isMainModule:
 
     var p = initParser(readFile("./tests/data/4node.glm"))
-    discard p.walk()
+    p.walk()
+    echo p.ast
 
 
