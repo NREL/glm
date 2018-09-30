@@ -48,10 +48,9 @@ proc reportError*(t: Token) =
 
     echo &"Parsing error on line: {line_index}"
     echo source_text
-    echo start_index
     let ntabs = source_text.count('\t')
     if start_index != end_index:
-        echo "^".align( (ntabs * 8) + start_index ) & "^".repeat( end_index - start_index + 1)
+        echo "^".align( (ntabs * 8) + start_index ) & "^".repeat( end_index - start_index )
     else:
         echo "^".align( (ntabs * 8) + start_index )
 
