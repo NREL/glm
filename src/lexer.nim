@@ -31,6 +31,23 @@ const
 proc `$`*(t: Token): string =
     &"<Token(\"{t.lexeme}\", {t.kind})>"
 
+proc reportError*(t: Token) =
+
+    let line_index= t.characters[0].line_index
+    var source_text = t.characters[0].source_text.splitLines()[line_index - 1]
+
+    var start_index = t.characters[0].column_index
+    let end_index = t.characters[^1].column_index
+
+    echo &"Parsing error on line: {line_index}"
+    echo source_text
+    if start_index != end_index:
+        echo "^".align(start_index-1) & "^".repeat(end_index - start_index + 1)
+    else:
+        echo "^".align(start_index)
+
+    # echo source_text[start_index..end_index]
+
 proc advance(lex: var Lexer): Character =
     result = lex.source[lex.current]
     lex.current += 1
@@ -131,7 +148,8 @@ proc scanToken(lex: var Lexer) =
                 else:
                     lex.addToken(s, tk_string, characters)
             else:
-                let error = &"Unable to parse:\n  line  col c index\n{c}\n"
+                reportError(c)
+                let error = &"Unable to parse character:\n  line  col c  index\n{c}\n"
                 raise newException(LexerError, error)
 
 proc scanTokens*(lex: var Lexer): seq[Token] =
