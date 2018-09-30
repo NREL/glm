@@ -101,6 +101,15 @@ proc toJson(c: Clock): JsonNode =
         gldJObject.add(k, v)
     return gldJObject
 
+proc toJson(d: Schedule): JsonNode =
+    var gldJObject = newJObject()
+    var values = newJArray()
+    gldJObject.add("name", newJString(d.name))
+    for v in d.values:
+        values.add(newJString(v))
+    gldJObject.add("values", values)
+    return gldJObject
+
 proc toJson*(ast: AST): JsonNode =
 
     var j = newJObject()
@@ -109,13 +118,14 @@ proc toJson*(ast: AST): JsonNode =
     var includesArray = newJArray()
     var directivesArray = newJArray()
     var definitionsArray = newJArray()
+    var schedulesArray = newJArray()
 
     j.add("clock", ast.clock.toJson())
     j.add("includes", includesArray)
     j.add("objects", objectsArray)
     j.add("modules", modulesArray)
     j.add("directives", directivesArray)
-    j.add("definitions", definitionsArray)
+    j.add("schedules", schedulesArray)
 
     var gldJObject: JsonNode
     for m in ast.modules:
@@ -137,6 +147,10 @@ proc toJson*(ast: AST): JsonNode =
     for d in ast.definitions:
         gldJObject = d.toJson()
         definitionsArray.add(gldJObject)
+
+    for s in ast.schedules:
+        gldJObject = s.toJson()
+        schedulesArray.add(gldJObject)
 
     return j
 

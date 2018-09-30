@@ -3,7 +3,6 @@
 from utils import nil
 from logging as logger import nil
 import json
-# import nimprof
 
 import ./parser
 import ./ast
