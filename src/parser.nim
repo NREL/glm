@@ -144,14 +144,13 @@ proc parse_object(p: var Parser): Object=
 
     let t = p.advance(tk_space, tk_newline)
 
-    if t.kind == tk_semicolon:
-        var o = newJObject()
-        let m = Object(name: object_name, attributes: o)
-        return m
-    elif t.kind == tk_left_brace:
+    if t.kind == tk_left_brace:
         var o = newJObject()
 
         while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+            if p.previous().kind == tk_object:
+                reportError(p.previous())
+                raise newException(ParserError, "Nested objects unsupported")
 
             var t = p.previous()
             assert p.match(tk_space)

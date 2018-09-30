@@ -35,7 +35,8 @@ proc reportError*(c: Character) =
 
     echo &"Parsing error on line: {line_index}"
     echo source_text
-    echo "^".align(start_index)
+    let ntabs = source_text.count('\t')
+    echo "^".align((ntabs * 8) + start_index)
 
 proc initScanner*(source_text: string): Scanner =
     return Scanner(
@@ -48,11 +49,6 @@ proc initScanner*(source_text: string): Scanner =
 
 proc get*(s: var Scanner): Character =
     s.source_index += 1
-
-    if s.source_index < s.last_index and s.source_text[s.source_index] == NEWLINE:
-        s.line_index += 1
-        s.column_index = -1
-
     s.column_index += 1
 
     if s.source_index >= s.last_index:
@@ -71,6 +67,10 @@ proc get*(s: var Scanner): Character =
             source_index: s.source_index,
             source_text: s.source_text,
         )
+    if s.source_index < s.last_index and s.source_text[s.source_index] == NEWLINE:
+        s.line_index += 1
+        s.column_index = -1
+
 
 proc characters*(s: var Scanner): seq[Character] =
     while true:
@@ -81,6 +81,9 @@ proc characters*(s: var Scanner): seq[Character] =
 
 when isMainModule:
 
-    var s = initScanner(readFile("./tests/data/4node.glm"))
-    echo s.characters
+    var s = initScanner("""Hello world
+        This is a test
+    """)
+    for c in s.characters:
+        echo c
 

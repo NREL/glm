@@ -48,10 +48,12 @@ proc reportError*(t: Token) =
 
     echo &"Parsing error on line: {line_index}"
     echo source_text
+    echo start_index
+    let ntabs = source_text.count('\t')
     if start_index != end_index:
-        echo "^".align(start_index-1) & "^".repeat(end_index - start_index + 1)
+        echo "^".align( (ntabs * 8) + start_index ) & "^".repeat( end_index - start_index + 1)
     else:
-        echo "^".align(start_index)
+        echo "^".align( (ntabs * 8) + start_index )
 
     # echo source_text[start_index..end_index]
 
@@ -145,6 +147,7 @@ proc scanToken(lex: var Lexer) =
                 var s: string
                 var characters: seq[Character] = @[]
                 s.add(c.cargo)
+                characters.add(c)
                 while ( not lex.isAtEnd() and lex.peek().cargo.isIdentifier ):
                     c = lex.advance()
                     s.add(c.cargo)
@@ -186,5 +189,14 @@ proc initLexer*(source: string): Lexer =
 when isMainModule:
 
     var l = initLexer(readFile("./tests/data/4node.glm"))
-    echo l.scanTokens()
+    for t in l.scanTokens():
+        if t.kind == tk_string:
+            for c in t.characters:
+                echo c
+            break
+    for t in l.scanTokens():
+        if t.kind == tk_number:
+            for c in t.characters:
+                echo c
+            break
 
