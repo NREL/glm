@@ -112,8 +112,21 @@ proc parse_module(p: var Parser): Module =
         let m = Module(name: module, attributes: o)
         return m
     elif t.kind == tk_left_brace:
-        reportError(t)
-        raise newException(ParserError, "Not implemented")
+
+        var o = newJObject()
+
+        while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+
+            var t = p.previous()
+            assert p.match(tk_space)
+            let lvalue = t.lexeme
+            let rvalue = p.parse_rvalue()
+
+            o.add(lvalue, newJString(rvalue))
+        p.ignore(tk_semicolon)
+        let m = Module(name: module, attributes: o)
+        return m
+
     else:
         reportError(t)
         raise newException(ParserError, "Failed to parse module.")
@@ -146,6 +159,8 @@ proc parse_object(p: var Parser): Object=
             let rvalue = p.parse_rvalue()
 
             o.add(lvalue, newJString(rvalue))
+
+        p.ignore(tk_semicolon)
 
         let m = Object(name: object_name, attributes: o)
         return m
