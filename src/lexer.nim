@@ -6,12 +6,12 @@ import tables
 from utils import nil
 
 type
-    Token* = object
+    Token* = ref object
         characters*: seq[Character]
         lexeme*: string
         kind*: tokens.TokenKind
 
-    Lexer* = object
+    Lexer* = ref object
         source*: seq[Character]
         tokens*: seq[Token]
         start*, current*: int

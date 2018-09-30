@@ -6,7 +6,7 @@ const NEWLINE = '\n'
 const TAB = '\t'
 
 type
-    Character* = object
+    Character* = ref object
         cargo*: char
         source_text*: string
         source_index*, line_index*, column_index*: int
@@ -22,7 +22,7 @@ proc `$`*(c: Character): string =
     &"{c.line_index:>6}{c.column_index:>4}  {cargo:<2} {c.source_index}"
 
 type
-    Scanner* = object
+    Scanner* = ref object
         source_text: string
         source_index, last_index, line_index, column_index: int
 

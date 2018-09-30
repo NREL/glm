@@ -7,7 +7,7 @@ import tokens
 import ast
 
 type
-    Parser* = object
+    Parser* = ref object
         current*: int
         tokens*: seq[Token]
         ast*: AST
