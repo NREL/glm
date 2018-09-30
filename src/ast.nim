@@ -54,7 +54,7 @@ proc toJson(o: Object): JsonNode =
     gldJObject.add("name", newJString(o.name))
     gldJObject.add("attributes", o.attributes)
     for o_child in o.children:
-        gldJObject.add("children", o.toJson())
+        gldJObject.add("children", o_child.toJson())
     return gldJObject
 
 proc toJson(m: Module): JsonNode =

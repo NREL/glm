@@ -146,11 +146,13 @@ proc parse_object(p: var Parser): Object=
 
     if t.kind == tk_left_brace:
         var o = newJObject()
+        var m = Object(name: object_name, attributes: o)
 
         while p.advance(tk_newline, tk_space).kind != tk_right_brace:
             if p.previous().kind == tk_object:
-                reportError(p.previous())
-                raise newException(ParserError, "Nested objects unsupported")
+                var child = p.parse_object()
+                m.children.add(child)
+                continue
 
             var t = p.previous()
             assert p.match(tk_space)
@@ -161,7 +163,6 @@ proc parse_object(p: var Parser): Object=
 
         p.ignore(tk_semicolon)
 
-        let m = Object(name: object_name, attributes: o)
         return m
     else:
         reportError(t)
@@ -214,7 +215,7 @@ proc walk*(p: var Parser) =
 
 if isMainModule:
 
-    var p = initParser(readFile("./tests/data/4node.glm"))
+    var p = initParser(readFile("./tests/data/IEEE_13_Node_Test_Feeder.glm"))
     p.walk()
     echo p.ast
 
