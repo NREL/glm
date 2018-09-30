@@ -26,6 +26,8 @@ const
      "true"   : tk_true,
      "clock"  : tk_clock,
      "module" : tk_module,
+     "set"    : tk_directive,
+     "define" : tk_definition,
   }.toTable
 
 proc `$`*(t: Token): string =
@@ -45,16 +47,19 @@ proc reportError*(t: Token) =
 
     var start_index = t.characters[0].column_index
     let end_index = t.characters[^1].column_index
+    var ntabs = source_text.count('\t')
 
     echo &"Parsing error on line: {line_index}"
     echo source_text
-    let ntabs = source_text.count('\t')
     if start_index != end_index:
-        echo "^".align( (ntabs * 8) + start_index ) & "^".repeat( end_index - start_index )
+        echo "^".align( (ntabs * 7) + start_index + 1 ) & "^".repeat( end_index - start_index )
     else:
-        echo "^".align( (ntabs * 8) + start_index )
+        echo "^".align( (ntabs * 7) + start_index + 1)
 
     # echo source_text[start_index..end_index]
+
+proc previous(lex: Lexer, index = 1): Character =
+    result = lex.source[lex.current - index]
 
 proc advance(lex: var Lexer): Character =
     result = lex.source[lex.current]
@@ -118,7 +123,7 @@ proc scanToken(lex: var Lexer) =
         of '#':
             lex.addToken(c.cargo, tk_hash, @[c])
         of '/':
-            if lex.match('/'):
+            if lex.peek().cargo == '/' and lex.previous(2).cargo != ':':
                 # This is a comment
                 # advance to end of line
                 while (not lex.isAtEnd() and lex.peek().cargo != '\n'):
@@ -199,3 +204,6 @@ when isMainModule:
                 echo c
             break
 
+    # var l = initLexer("""#define stylesheet=http://gridlab-d.svn.sourceforge.net/viewvc/gridlab-d/trunk/core/gridlabd-2_0;//this is a comment""")
+    # for t in l.scanTokens():
+        # echo t

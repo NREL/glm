@@ -71,6 +71,7 @@ proc parse_rvalue(p: var Parser): string =
     var rvalue : seq[string]
 
     while p.peek().kind != tk_semicolon:
+        echo p.peek()
         if p.peek().kind == tk_newline:
             reportError(p.peek())
             raise newException(ParserError, "Unexpected newline character. Expected semicolon.")
@@ -168,7 +169,7 @@ proc parse_object(p: var Parser): Object=
         reportError(t)
         raise newException(ParserError, "Failed to parse object.")
 
-proc parse_directive(p: var Parser): Directive=
+proc parse_directive(p: var Parser): Directive =
     assert p.previous().kind == tk_hash
     let t_directive_type = p.advance(tk_newline, tk_space)
     p.expect(tk_space)
@@ -181,6 +182,20 @@ proc parse_directive(p: var Parser): Directive=
     else:
         reportError(p.peek())
         raise newException(ParserError, "Failed to parse directive.")
+
+proc parse_definition(p: var Parser): Definition =
+    assert p.previous().kind == tk_hash
+    let t_definition_type = p.advance(tk_newline, tk_space)
+    p.expect(tk_space)
+    var name = p.advance().lexeme
+    if p.peek().kind == tk_equal:
+        p.advance(tk_newline, tk_space)
+        var rvalue = p.parse_rvalue()
+        let d = Definition(name: name, value: rvalue)
+        return d
+    else:
+        reportError(p.peek())
+        raise newException(ParserError, "Failed to parse definition.")
 
 proc walk*(p: var Parser) =
 
@@ -199,9 +214,13 @@ proc walk*(p: var Parser) =
             var node = p.parse_object()
             p.ast.objects.add(node)
 
-        elif t.kind == tk_hash:
+        elif t.kind == tk_hash and p.peek().kind == tk_directive:
             var node = p.parse_directive()
             p.ast.directives.add(node)
+
+        elif t.kind == tk_hash and p.peek().kind == tk_definition:
+            var node = p.parse_definition()
+            p.ast.definitions.add(node)
 
         elif t.kind == tk_eof:
             break

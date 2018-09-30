@@ -21,6 +21,8 @@ type
         tk_singlequote,
         tk_doublequote,
         # keywords
+        tk_directive,
+        tk_definition,
         tk_class,
         tk_object,
         tk_false,

@@ -36,7 +36,7 @@ proc reportError*(c: Character) =
     echo &"Parsing error on line: {line_index}"
     echo source_text
     let ntabs = source_text.count('\t')
-    echo "^".align((ntabs * 8) + start_index)
+    echo "^".align((ntabs * 7) + start_index + 1)
 
 proc initScanner*(source_text: string): Scanner =
     return Scanner(
