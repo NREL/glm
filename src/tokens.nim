@@ -29,6 +29,7 @@ type
         tk_true,
         tk_clock,
         tk_module,
+        tk_schedule,
         # Literals.
         tk_identifier,
         tk_string,

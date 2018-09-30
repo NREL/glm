@@ -20,14 +20,15 @@ type
 
 const
   keywords = {
-     "class"  : tk_class,
-     "object" : tk_object,
-     "false"  : tk_false,
-     "true"   : tk_true,
-     "clock"  : tk_clock,
-     "module" : tk_module,
-     "set"    : tk_directive,
-     "define" : tk_definition,
+     "class"   : tk_class,
+     "object"  : tk_object,
+     "false"   : tk_false,
+     "true"    : tk_true,
+     "clock"   : tk_clock,
+     "module"  : tk_module,
+     "set"     : tk_directive,
+     "define"  : tk_definition,
+     "schedule": tk_schedule,
   }.toTable
 
 proc `$`*(t: Token): string =
@@ -59,7 +60,10 @@ proc reportError*(t: Token) =
     # echo source_text[start_index..end_index]
 
 proc previous(lex: Lexer, index = 1): Character =
-    result = lex.source[lex.current - index]
+    if lex.current - index < 0:
+        result = Character()
+    else:
+        result = lex.source[lex.current - index]
 
 proc advance(lex: var Lexer): Character =
     result = lex.source[lex.current]

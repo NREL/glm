@@ -22,6 +22,9 @@ type
     Definition* = ref object of GLD
         name*: string
         value*: string
+    Schedule* = ref object of GLD
+        name*: string
+        values*: seq[string]
 
     AST* = ref object
         clock*: Clock
@@ -30,6 +33,7 @@ type
         objects*: seq[Object]
         directives*: seq[Directive]
         definitions*: seq[Definition]
+        schedules*: seq[Schedule]
 
 proc `$`*(ast: AST): string =
     fmt"<AST(modules={ast.modules.len}, objects={ast.objects.len})>"
@@ -52,6 +56,9 @@ proc `$`*(p: GLD): string =
         &"<{p.type}(name: {p.name}, value: {p.value})>"
     elif p of Include:
         var p = cast[Include](p)
+        &"<{p.type}(name: {p.name})>"
+    elif p of Schedule:
+        var p = cast[Schedule](p)
         &"<{p.type}(name: {p.name})>"
     else:
         &"<{p.type}()>"

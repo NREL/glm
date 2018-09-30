@@ -20,10 +20,6 @@ proc initParser*(data: string): Parser =
         current: 0,
         tokens: l.tokens,
         ast: AST(
-            includes: @[],
-            modules: @[],
-            objects: @[],
-            directives: @[],
             clock: nil,
         )
     )
@@ -71,7 +67,6 @@ proc parse_rvalue(p: var Parser): string =
     var rvalue : seq[string]
 
     while p.peek().kind != tk_semicolon:
-        echo p.peek()
         if p.peek().kind == tk_newline:
             reportError(p.peek())
             raise newException(ParserError, "Unexpected newline character. Expected semicolon.")
@@ -141,7 +136,8 @@ proc parse_object(p: var Parser): Object=
 
     if p.peek().kind == tk_colon:
         p.advance()
-        object_name = object_name & ":" & p.advance().lexeme
+        while p.peek().lexeme != " ":
+            object_name = object_name & ":" & p.advance().lexeme
 
     let t = p.advance(tk_space, tk_newline)
 
@@ -167,7 +163,34 @@ proc parse_object(p: var Parser): Object=
         return m
     else:
         reportError(t)
-        raise newException(ParserError, "Failed to parse object.")
+        raise newException(ParserError, fmt"Failed to parse object. Expected {{ but found {t.lexeme}")
+
+proc parse_schedule(p: var Parser): Schedule =
+    assert p.previous().kind == tk_schedule
+
+    let t_schedule = p.advance(tk_newline, tk_space)
+    var schedule_name = t_schedule.lexeme
+
+    let t = p.advance(tk_space, tk_newline)
+
+    if t.kind == tk_left_brace:
+
+        var schedules: seq[string] = @[]
+
+        while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+
+            let rvalue = p.parse_rvalue()
+            schedules.add(rvalue)
+
+        p.ignore(tk_semicolon)
+
+        let s = Schedule(name: schedule_name, values: schedules)
+
+        return s
+    else:
+        reportError(t)
+        raise newException(ParserError, "Failed to parse schedule.")
+
 
 proc parse_directive(p: var Parser): Directive =
     assert p.previous().kind == tk_hash
@@ -213,6 +236,10 @@ proc walk*(p: var Parser) =
         elif t.kind == tk_object:
             var node = p.parse_object()
             p.ast.objects.add(node)
+
+        elif t.kind == tk_schedule:
+            var node = p.parse_schedule()
+            p.ast.schedules.add(node)
 
         elif t.kind == tk_hash and p.peek().kind == tk_directive:
             var node = p.parse_directive()
