@@ -16,6 +16,7 @@ type
         tk_colon,
         tk_slash,
         tk_star,
+        tk_hash,
         tk_equal,
         tk_singlequote,
         tk_doublequote,

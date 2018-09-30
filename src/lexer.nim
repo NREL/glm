@@ -29,7 +29,14 @@ const
   }.toTable
 
 proc `$`*(t: Token): string =
-    &"<Token(\"{t.lexeme}\", {t.kind})>"
+    var lexeme = t.lexeme
+    if lexeme == "\n":
+        lexeme = "\\n"
+    elif lexeme == "\t":
+        lexeme = "\\t"
+    else:
+        discard
+    fmt"<Token(""{lexeme}"", {t.kind})>"
 
 proc reportError*(t: Token) =
 
@@ -107,6 +114,8 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(c.cargo, tk_plus, @[c])
         of '*':
             lex.addToken(c.cargo, tk_star, @[c])
+        of '#':
+            lex.addToken(c.cargo, tk_hash, @[c])
         of '/':
             if lex.match('/'):
                 # This is a comment

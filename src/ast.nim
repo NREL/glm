@@ -16,12 +16,16 @@ type
         name*: string
         attributes*: JsonNode
         children*: seq[Object]
+    Directive* = ref object of GLD
+        name*: string
+        value*: string
 
     AST* = ref object
-        includes*: seq[Include]
         clock*: Clock
+        includes*: seq[Include]
         modules*: seq[Module]
         objects*: seq[Object]
+        directives*: seq[Directive]
 
 proc `$`*(ast: AST): string =
     fmt"<AST(modules={ast.modules.len}, objects={ast.objects.len})>"
@@ -36,6 +40,12 @@ proc `$`*(p: GLD): string =
     elif p of Clock:
         var p = cast[Clock](p)
         &"<{p.type}(attr: {p.attributes.len})>"
+    elif p of Directive:
+        var p = cast[Directive](p)
+        &"<{p.type}(name: {p.name}, value: {p.value})>"
+    elif p of Include:
+        var p = cast[Include](p)
+        &"<{p.type}(name: {p.name})>"
     else:
         &"<{p.type}()>"
 
@@ -58,15 +68,31 @@ proc toJson(i: Include): JsonNode =
     gldJObject.add("name", newJString(i.name))
     return gldJObject
 
+proc toJson(d: Directive): JsonNode =
+    var gldJObject = newJObject()
+    gldJObject.add("name", newJString(d.name))
+    gldJObject.add("value", newJString(d.value))
+    return gldJObject
+
+proc toJson(c: Clock): JsonNode =
+    var gldJObject = newJObject()
+    for k, v in c.attributes:
+        gldJObject.add(k, v)
+    return gldJObject
+
 proc toJson*(ast: AST): JsonNode =
 
     var j = newJObject()
     var modulesArray = newJArray()
     var objectsArray = newJArray()
     var includesArray = newJArray()
+    var directivesArray = newJArray()
+
+    j.add("clock", ast.clock.toJson())
     j.add("includes", includesArray)
     j.add("objects", objectsArray)
     j.add("modules", modulesArray)
+    j.add("directives", directivesArray)
 
     var gldJObject: JsonNode
     for m in ast.modules:
@@ -80,6 +106,10 @@ proc toJson*(ast: AST): JsonNode =
     for o in ast.objects:
         gldJObject = o.toJson()
         objectsArray.add(gldJObject)
+
+    for d in ast.directives:
+        gldJObject = d.toJson()
+        directivesArray.add(gldJObject)
 
     return j
 
