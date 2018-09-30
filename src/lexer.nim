@@ -1,20 +1,26 @@
 import strutils
 import strformat
-import scanner
 import tokens
 import tables
 from utils import nil
 
+const ENDMARK = '\0'
+const NEWLINE = '\n'
+const TAB = '\t'
+
 type
     Token* = ref object
-        characters*: seq[Character]
+        start_index: int
+        end_index: int
+        line_index: int
         lexeme*: string
         kind*: tokens.TokenKind
 
     Lexer* = ref object
-        source*: seq[Character]
+        source*: string
         tokens*: seq[Token]
         start*, current*: int
+        column_index, line_index, last_index: int
 
     LexerError* = object of Exception
 
@@ -42,33 +48,38 @@ proc `$`*(t: Token): string =
         discard
     fmt"<Token(""{lexeme}"", {t.kind})>"
 
-proc reportError*(t: Token) =
+proc reportError*(t: Token, source: string) =
+    let line_index= t.line_index
 
-    let line_index= t.characters[0].line_index
-    var source_text = t.characters[0].source_text.splitLines()[line_index - 1]
+    var source_text = source.splitLines()[line_index - 1]
 
-    var start_index = t.characters[0].column_index
-    let end_index = t.characters[^1].column_index
+    var start_index = t.start_index
+    let end_index = t.end_index
     var ntabs = source_text[0..start_index].count('\t')
 
     echo &"Error on line: {line_index}"
     echo source_text
     if start_index != end_index:
-        echo "^".align( (ntabs * 7) + start_index + 1 ) & "^".repeat( end_index - start_index )
+        echo "^".repeat( end_index - start_index ).align( (ntabs * 7) + end_index + 1 )
     else:
         echo "^".align( (ntabs * 7) + start_index + 1)
 
     # echo source_text[start_index..end_index]
+proc reportError*(lex: var Lexer, c: char) =
+    # TODO: improve error reporting
+    echo &"Unknown symbol : {c}"
 
-proc previous(lex: Lexer, index = 1): Character =
-    if lex.current - index < 0:
-        result = Character()
-    else:
+proc previous(lex: Lexer, index = 1): char =
+    if lex.current - index >= 0:
         result = lex.source[lex.current - index]
 
-proc advance(lex: var Lexer): Character =
+proc advance(lex: var Lexer): char =
+    if lex.current < lex.last_index and lex.previous() == NEWLINE:
+        lex.line_index += 1
+        lex.column_index = -1
     result = lex.source[lex.current]
     lex.current += 1
+    lex.column_index += 1
 
 proc isAtEnd(lex: Lexer): bool =
   # Check if EOF reached
@@ -78,156 +89,161 @@ proc match(lex: var Lexer, expected: char): bool =
     result = true
     if lex.isAtEnd():
       result = false
-    elif lex.source[lex.current].cargo != expected:
+    elif lex.source[lex.current] != expected:
       result = false
     else:
       # Match found and increment position.
       # Group current & previous chars into a single tokenKind
       lex.current += 1
 
-proc peek(lex: var Lexer): Character =
+proc peek(lex: var Lexer): char =
     # Returns the current char without moving to the next one
     result = lex.source[lex.current]
 
-proc addToken(lex: var Lexer, s: string, token_kind: TokenKind, characters: seq[Character]) =
+proc addToken(lex: var Lexer, s: string, token_kind: TokenKind, start_index: int, end_index: int, line_index: int) =
     lex.tokens.add(
         Token(
             lexeme: s,
             kind: token_kind,
-            characters: characters
+            start_index: start_index,
+            end_index: end_index,
+            line_index: line_index,
         )
     )
 
-proc addToken(lex: var Lexer, c: char, token_kind: TokenKind, characters: seq[Character]) =
-    addToken(lex, $c, token_kind, characters)
+
+proc addToken(lex: var Lexer, c: char, token_kind: TokenKind, start_index: int, end_index: int, line_index: int) =
+    addToken(lex, $c, token_kind, start_index, end_index, line_index)
 
 proc isIdentifier(c: char): bool =
     return c.isAlphaNumeric or c == '_'
 
 proc scanToken(lex: var Lexer) =
-    var c: Character = lex.advance()
-    case c.cargo:
+    var c: char = lex.advance()
+    case c:
         of '(':
-            lex.addToken(c.cargo, tk_left_paren, @[c])
+            lex.addToken(c, tk_left_paren, lex.column_index, lex.column_index, lex.line_index)
         of ')':
-            lex.addToken(c.cargo, tk_right_paren, @[c])
+            lex.addToken(c, tk_right_paren, lex.column_index, lex.column_index, lex.line_index)
         of '{':
-            lex.addToken(c.cargo, tk_left_brace, @[c])
+            lex.addToken(c, tk_left_brace, lex.column_index, lex.column_index, lex.line_index)
         of '}':
-            lex.addToken(c.cargo, tk_right_brace, @[c])
+            lex.addToken(c, tk_right_brace, lex.column_index, lex.column_index, lex.line_index)
         of '[':
-            lex.addToken(c.cargo, tk_left_bracket, @[c])
+            lex.addToken(c, tk_left_bracket, lex.column_index, lex.column_index, lex.line_index)
         of ']':
-            lex.addToken(c.cargo, tk_right_bracket, @[c])
+            lex.addToken(c, tk_right_bracket, lex.column_index, lex.column_index, lex.line_index)
         of ',':
-            lex.addToken(c.cargo, tk_comma, @[c])
+            lex.addToken(c, tk_comma, lex.column_index, lex.column_index, lex.line_index)
         of '.':
-            lex.addToken(c.cargo, tk_period, @[c])
+            lex.addToken(c, tk_period, lex.column_index, lex.column_index, lex.line_index)
         of '-':
-            lex.addToken(c.cargo, tk_minus, @[c])
+            lex.addToken(c, tk_minus, lex.column_index, lex.column_index, lex.line_index)
         of '+':
-            lex.addToken(c.cargo, tk_plus, @[c])
+            lex.addToken(c, tk_plus, lex.column_index, lex.column_index, lex.line_index)
         of '^':
-            lex.addToken(c.cargo, tk_caret, @[c])
+            lex.addToken(c, tk_caret, lex.column_index, lex.column_index, lex.line_index)
         of '|':
-            lex.addToken(c.cargo, tk_pipe, @[c])
+            lex.addToken(c, tk_pipe, lex.column_index, lex.column_index, lex.line_index)
         of '*':
-            lex.addToken(c.cargo, tk_star, @[c])
+            lex.addToken(c, tk_star, lex.column_index, lex.column_index, lex.line_index)
         of '%':
-            lex.addToken(c.cargo, tk_percent, @[c])
+            lex.addToken(c, tk_percent, lex.column_index, lex.column_index, lex.line_index)
         of '#':
-            lex.addToken(c.cargo, tk_hash, @[c])
+            lex.addToken(c, tk_hash, lex.column_index, lex.column_index, lex.line_index)
         of '$':
-            lex.addToken(c.cargo, tk_dollar, @[c])
+            lex.addToken(c, tk_dollar, lex.column_index, lex.column_index, lex.line_index)
         of '<':
-            lex.addToken(c.cargo, tk_left_triangle_bracket, @[c])
+            lex.addToken(c, tk_left_triangle_bracket, lex.column_index, lex.column_index, lex.line_index)
         of '>':
-            lex.addToken(c.cargo, tk_right_triangle_bracket, @[c])
+            lex.addToken(c, tk_right_triangle_bracket, lex.column_index, lex.column_index, lex.line_index)
         of '?':
-            lex.addToken(c.cargo, tk_question, @[c])
+            lex.addToken(c, tk_question, lex.column_index, lex.column_index, lex.line_index)
         of '\\':
-            lex.addToken(c.cargo, tk_backslash, @[c])
+            lex.addToken(c, tk_backslash, lex.column_index, lex.column_index, lex.line_index)
         of '/':
-            if lex.peek().cargo == '/' and lex.previous(2).cargo != ':':
+            if lex.peek() == '/' and lex.previous(2) != ':':
                 # This is a comment
                 # advance to end of line
-                while (not lex.isAtEnd() and lex.peek().cargo != '\n'):
+                while (not lex.isAtEnd() and lex.peek() != '\n'):
                     discard lex.advance()
             else:
-                lex.addToken(c.cargo, tk_slash, @[c])
+                lex.addToken(c, tk_slash, lex.column_index, lex.column_index, lex.line_index)
         of ';':
-            lex.addToken(c.cargo, tk_semicolon, @[c])
+            lex.addToken(c, tk_semicolon, lex.column_index, lex.column_index, lex.line_index)
         of ':':
-            lex.addToken(c.cargo, tk_colon, @[c])
+            lex.addToken(c, tk_colon, lex.column_index, lex.column_index, lex.line_index)
         of '\'':
-            lex.addToken(c.cargo, tk_singlequote, @[c])
+            lex.addToken(c, tk_singlequote, lex.column_index, lex.column_index, lex.line_index)
         of '\"':
-            lex.addToken(c.cargo, tk_doublequote, @[c])
+            lex.addToken(c, tk_doublequote, lex.column_index, lex.column_index, lex.line_index)
         of '=':
-            lex.addToken(c.cargo, tk_equal, @[c])
+            lex.addToken(c, tk_equal, lex.column_index, lex.column_index, lex.line_index)
         of '\n':
-            lex.addToken(c.cargo, tk_newline, @[c])
+            lex.addToken(c, tk_newline, lex.column_index, lex.column_index, lex.line_index)
         of ' ':
-            lex.addToken(c.cargo, tk_space, @[c])
+            lex.addToken(c, tk_space, lex.column_index, lex.column_index, lex.line_index)
         of '\r', '\t':
             discard
         else:
-            if isAlphaNumeric(c.cargo):
+            if isAlphaNumeric(c):
                 var s: string
-                var characters: seq[Character] = @[]
-                s.add(c.cargo)
-                characters.add(c)
-                while ( not lex.isAtEnd() and lex.peek().cargo.isIdentifier ):
+                s.add(c)
+                while ( not lex.isAtEnd() and lex.peek().isIdentifier ):
                     c = lex.advance()
-                    s.add(c.cargo)
-                    characters.add(c)
+                    s.add(c)
                 if keywords.contains(s):
                     var tk = keywords[s]
-                    lex.addToken(s, tk, characters)
+                    lex.addToken(s, tk, lex.column_index - s.len, lex.column_index, lex.line_index)
                 elif s.isDigit():
-                    lex.addToken(s, tk_number, characters)
+                    lex.addToken(s, tk_number, lex.column_index - s.len, lex.column_index, lex.line_index)
                 else:
-                    lex.addToken(s, tk_string, characters)
+                    lex.addToken(s, tk_string, lex.column_index - s.len, lex.column_index, lex.line_index)
             else:
-                reportError(c)
-                let error = &"Unable to parse character:\n  line  col c  index\n{c}\n"
+                var t = Token(
+                    lexeme: $c,
+                    kind: tk_eof,
+                    start_index: lex.column_index,
+                    end_index: lex.column_index,
+                    line_index: lex.line_index,
+                )
+                reportError(t, lex.source)
+                let error = &"Unable to parse character: {c}\n"
                 raise newException(LexerError, error)
 
 proc scanTokens*(lex: var Lexer): seq[Token] =
     while not lex.isAtEnd():
         lex.scanToken()
-    lex.tokens.add(
-        Token(
-            kind: tk_eof,
-            lexeme: "\0",
-            characters: @[],
-        )
+    lex.addToken(
+        "\0",
+        tk_eof,
+        lex.column_index,
+        lex.column_index,
+        lex.line_index,
     )
     return lex.tokens
 
 proc initLexer*(source: string): Lexer =
     # Create a new Lexer instance
-    var s = scanner.initScanner(source)
+    # var s = scanner.initScanner(source)
     return Lexer(
-        source: s.characters,
+        source: source,
         tokens: @[],
         start: 0,
         current: 0,
+        line_index: 1,
+        column_index: -1,
+        last_index: len(source)
     )
 
 when isMainModule:
 
     var l = initLexer(readFile("./tests/data/4node.glm"))
     for t in l.scanTokens():
-        if t.kind == tk_string:
-            for c in t.characters:
-                echo c
-            break
-    for t in l.scanTokens():
-        if t.kind == tk_number:
-            for c in t.characters:
-                echo c
-            break
+        echo t
+        reportError(t, l.source)
+        # if t.kind == tk_clock:
+            # break
 
     # var l = initLexer("""#define stylesheet=http://gridlab-d.svn.sourceforge.net/viewvc/gridlab-d/trunk/core/gridlabd-2_0;//this is a comment""")
     # for t in l.scanTokens():
