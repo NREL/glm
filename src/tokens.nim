@@ -15,6 +15,7 @@ type
         tk_semicolon,
         tk_colon,
         tk_slash,
+        tk_pipe,
         tk_star,
         tk_hash,
         tk_equal,

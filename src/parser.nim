@@ -177,6 +177,7 @@ proc parse_schedule(p: var Parser): Schedule =
 
         var schedules: seq[string] = @[]
 
+        # TODO: nested schedule blocks
         while p.advance(tk_newline, tk_space).kind != tk_right_brace:
 
             let rvalue = p.parse_rvalue()

@@ -48,7 +48,7 @@ proc reportError*(t: Token) =
 
     var start_index = t.characters[0].column_index
     let end_index = t.characters[^1].column_index
-    var ntabs = source_text.count('\t')
+    var ntabs = source_text[0..start_index].count('\t')
 
     echo &"Parsing error on line: {line_index}"
     echo source_text
@@ -122,6 +122,8 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(c.cargo, tk_minus, @[c])
         of '+':
             lex.addToken(c.cargo, tk_plus, @[c])
+        of '|':
+            lex.addToken(c.cargo, tk_pipe, @[c])
         of '*':
             lex.addToken(c.cargo, tk_star, @[c])
         of '#':
