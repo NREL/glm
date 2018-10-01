@@ -8,6 +8,7 @@ import ast
 
 type
     Parser* = ref object
+        lexer*: Lexer
         current*: int
         tokens*: seq[Token]
         ast*: AST
@@ -17,6 +18,7 @@ proc initParser*(data: string): Parser =
     var l = initLexer(data)
     discard l.scanTokens()
     var p = Parser(
+        lexer: l,
         current: 0,
         tokens: l.tokens,
         ast: AST(
@@ -48,7 +50,7 @@ proc expect(p: var Parser, kind: TokenKind): Token {.discardable.} =
     if t.kind == kind:
         return t
     else:
-        reportError(t)
+        reportError(t, p.lexer.source)
         raise newException(ParserError, &"Expected {kind}, but got {t.lexeme}")
 
 proc check(p: Parser, kind: TokenKind): bool =
@@ -68,7 +70,7 @@ proc parse_rvalue(p: var Parser): string =
 
     while p.peek().kind != tk_semicolon:
         if p.peek().kind == tk_newline:
-            reportError(p.peek())
+            reportError(p.peek(), p.lexer.source)
             raise newException(ParserError, "Unexpected newline character. Expected semicolon.")
         rvalue.add( p.advance().lexeme )
 
@@ -124,7 +126,7 @@ proc parse_module(p: var Parser): Module =
         return m
 
     else:
-        reportError(t)
+        reportError(t, p.lexer.source)
         raise newException(ParserError, "Failed to parse module.")
 
 proc parse_class(p: var Parser): Class=
@@ -150,7 +152,7 @@ proc parse_class(p: var Parser): Class=
 
         return c
     else:
-        reportError(t)
+        reportError(t, p.lexer.source)
         raise newException(ParserError, fmt"Failed to parse class. Expected {{ but found {t.lexeme}")
 
 
@@ -188,7 +190,7 @@ proc parse_object(p: var Parser): Object=
 
         return m
     else:
-        reportError(t)
+        reportError(t, p.lexer.source)
         raise newException(ParserError, fmt"Failed to parse object. Expected {{ but found {t.lexeme}")
 
 proc parse_schedule(p: var Parser): Schedule =
@@ -215,7 +217,7 @@ proc parse_schedule(p: var Parser): Schedule =
 
         return s
     else:
-        reportError(t)
+        reportError(t, p.lexer.source)
         raise newException(ParserError, "Failed to parse schedule.")
 
 proc parse_include(p: var Parser): Include =
@@ -238,7 +240,7 @@ proc parse_directive(p: var Parser): Directive =
         let d = Directive(name: name, value: rvalue)
         return d
     else:
-        reportError(p.peek())
+        reportError(p.peek(), p.lexer.source)
         raise newException(ParserError, "Failed to parse directive.")
 
 proc parse_definition(p: var Parser): Definition =
@@ -252,7 +254,7 @@ proc parse_definition(p: var Parser): Definition =
         let d = Definition(name: name, value: rvalue)
         return d
     else:
-        reportError(p.peek())
+        reportError(p.peek(), p.lexer.source)
         raise newException(ParserError, "Failed to parse definition.")
 
 proc walk*(p: var Parser) =
@@ -303,7 +305,7 @@ proc walk*(p: var Parser) =
             # echo p.current
             # for i, t in p.tokens:
                 # echo i, " ", t
-            reportError(t)
+            reportError(t, p.lexer.source)
             raise newException(ParserError, "Unknown token encountered")
 
 if isMainModule:
