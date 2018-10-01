@@ -1,0 +1,80 @@
+dist: precise
+sudo: false
+
+language: c
+
+addons:
+  apt:
+    packages:
+      - build-essential
+      - scons
+      - pkg-config
+      - binutils-mingw-w64-i686
+      - binutils-mingw-w64-x86-64
+      - gcc-mingw-w64-i686
+      - gcc-mingw-w64-x86-64
+      - g++-mingw-w64-i686
+      - g++-mingw-w64-x86-64
+      - mingw-w64
+
+cache:
+  directories:
+    - $HOME/cache
+
+matrix:
+  fast_finish: true
+  include:
+    - os: linux
+      env:
+        - BUILD=linux
+        - CHANNEL=devel
+      compiler: clang
+
+    - os: linux
+      sudo: required
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            # For cross-compiling to Windows.
+            - binutils-mingw-w64-i686
+            - binutils-mingw-w64-x86-64
+            - gcc-mingw-w64-i686
+            - gcc-mingw-w64-x86-64
+            - g++-mingw-w64-i686
+            - g++-mingw-w64-x86-64
+            - mingw-w64
+      env:
+        - BUILD=windows
+        - CHANNEL=devel
+      compiler: x86_64-w64-mingw32-gcc
+
+    - os: osx
+      compiler: clang
+      env:
+        - BUILD=osx
+        - CHANNEL=stable
+
+before_install:
+  # Install nim
+  - git clone -b devel git://github.com/nim-lang/Nim.git --depth 1
+  - cd Nim
+  - git clone --depth 1 git://github.com/nim-lang/csources
+  - cd csources && sh build.sh
+  - cd ..
+  - bin/nim c koch
+  - ./koch boot -d:release
+  - export PATH=$PWD/bin:$PATH
+  - cd ..
+
+script:
+  - nim c --run ./src/glm.nim --path-to-file ./tests/data/4node.glm
+
+notifications:
+  email: false
+
+branches:
+  only:
+    - master
