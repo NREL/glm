@@ -8,6 +8,8 @@
 !*/
 
 bin/*
+lib/*.so
+lib/*.pyd
 
 ### Nim ###
 nimcache/
