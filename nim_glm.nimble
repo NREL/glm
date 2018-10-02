@@ -10,4 +10,4 @@ bin           = @["glm"]
 
 # Dependencies
 
-requires "nim >= 0.19.0", "cligen#head"
+requires "nim >= 0.19.0", "cligen#head", "nimpy"
