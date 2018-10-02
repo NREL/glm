@@ -47,6 +47,7 @@ before_install:
   - export PATH=~/.nimble/bin:$PATH
   - echo "export PATH=~/.nimble/bin:$PATH" >> ~/.profile
   - choosenim $CHANNEL
+  - nimble install -y https://github.com/c-blake/cligen
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then export CC=x86_64-w64-mingw32-gcc; fi
 
 script:
