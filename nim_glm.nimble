@@ -11,3 +11,9 @@ bin           = @["glm"]
 # Dependencies
 
 requires "nim >= 0.19.0", "cligen#head", "nimpy"
+
+task lib, "build library":
+    when defined(crosswin):
+        exec("nim c --app:lib --out:lib/glm.so src/glm.nim")
+    else:
+        exec("nim c --app:lib --out:lib/glm.pyd src/glm.nim")
