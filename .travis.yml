@@ -59,6 +59,8 @@ script:
   - mkdir -p glm-$BUILD-x86_64
   - mv bin/glm glm-$BUILD-x86_64
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-x86_64; fi
+  - nimble library -y -d:release --passc:"-flto" $CROSS
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv lib/glm.pyd glm-$BUILD-x86_64; else mv lib/glm.so glm-$BUILD-x86_64; fi
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 dist/glm-$BUILD-x86_64.zip glm-$BUILD-x86_64; else tar cfJ dist/glm-$BUILD-x86_64.tar.xz glm-$BUILD-x86_64; fi
 
 after_success:
@@ -66,6 +68,7 @@ after_success:
   - chmod a+x github-release
     # - ./github-release release --token=$GITHUB_TOKEN --owner=kdheepak --repo=travis-nim --title=$TRAVIS_TAG --tag=$TRAVIS_TAG
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then ./github-release upload --token=$GITHUB_TOKEN --owner=kdheepak --repo=nim-glm --file=dist/glm-$BUILD-x86_64.zip --tag=releases --name=glm-$BUILD-x86_64.zip; else ./github-release upload --token=$GITHUB_TOKEN --owner=kdheepak --repo=nim-glm --file=dist/glm-$BUILD-x86_64.tar.xz --tag=releases --name=glm-$BUILD-x86_64.tar.xz; fi
+
 notifications:
   email: false
 
