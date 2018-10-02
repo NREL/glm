@@ -1,38 +1,18 @@
-dist: precise
+dist: trusty
 sudo: false
 
 language: c
-
-addons:
-  apt:
-    packages:
-      - build-essential
-      - scons
-      - pkg-config
-      - binutils-mingw-w64-i686
-      - binutils-mingw-w64-x86-64
-      - gcc-mingw-w64-i686
-      - gcc-mingw-w64-x86-64
-      - g++-mingw-w64-i686
-      - g++-mingw-w64-x86-64
-      - mingw-w64
-
-cache:
-  directories:
-    - $HOME/cache
 
 matrix:
   fast_finish: true
   include:
     - os: linux
       env:
-        - BUILD=linux
-        - CHANNEL=devel
-      compiler: clang
+          BUILD=linux
+          CHANNEL=stable
+          CROSS=""
 
     - os: linux
-      sudo: required
-      dist: trusty
       addons:
         apt:
           sources:
@@ -47,34 +27,49 @@ matrix:
             - g++-mingw-w64-x86-64
             - mingw-w64
       env:
-        - BUILD=windows
-        - CHANNEL=devel
-      compiler: x86_64-w64-mingw32-gcc
+          BUILD=windows
+          CHANNEL=stable
+          CROSS="-d:crosswin"
 
     - os: osx
       compiler: clang
       env:
-        - BUILD=osx
-        - CHANNEL=stable
+          BUILD=osx
+          CHANNEL=stable
+          CROSS=""
 
 before_install:
   # Install nim
-  - git clone -b devel git://github.com/nim-lang/Nim.git --depth 1
-  - cd Nim
-  - git clone --depth 1 git://github.com/nim-lang/csources
-  - cd csources && sh build.sh
-  - cd ..
-  - bin/nim c koch
-  - ./koch boot -d:release
-  - export PATH=$PWD/bin:$PATH
-  - cd ..
+  - export CHOOSENIM_NO_ANALYTICS=1
+  - curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+  - sh init.sh -y
+  - export PATH=/Users/travis/.nimble/bin:$PATH
+  - export PATH=~/.nimble/bin:$PATH
+  - echo "export PATH=~/.nimble/bin:$PATH" >> ~/.profile
+  - choosenim $CHANNEL
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then export CC=x86_64-w64-mingw32-gcc; fi
 
 script:
-  - nim c --run ./src/glm.nim --path-to-file ./tests/data/4node.glm
+  - mkdir -p dist
+  # pcre64.dll/pcre32.dll must be distributed with the Windows executable
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then curl -O https://nim-lang.org/download/dlls.zip; unzip dlls.zip; fi
+  - nimble build -d:release --passc:"-flto" $CROSS
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip bin/glm pcre64.dll; else strip bin/glm; fi
+  - mkdir -p glm-$BUILD-x86_64
+  - mv bin/glm glm-$BUILD-x86_64
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-x86_64; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 dist/glm-$BUILD-x86_64.zip glm-$BUILD-x86_64; else tar cfJ dist/glm-$BUILD-x86_64.tar.xz glm-$BUILD-x86_64; fi
 
+after_success:
+  - travis_retry curl -L https://github.com/tfausak/github-release/releases/download/1.2.2/github-release-$TRAVIS_OS_NAME.gz | gunzip > github-release
+  - chmod a+x github-release
+    # - ./github-release release --token=$GITHUB_TOKEN --owner=kdheepak --repo=travis-nim --title=$TRAVIS_TAG --tag=$TRAVIS_TAG
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then ./github-release upload --token=$GITHUB_TOKEN --owner=kdheepak --repo=nim-glm --file=dist/glm-$BUILD-x86_64.zip --tag=releases --name=glm-$BUILD-x86_64.zip; else ./github-release upload --token=$GITHUB_TOKEN --owner=kdheepak --repo=nim-glm --file=dist/glm-$BUILD-x86_64.tar.xz --tag=releases --name=glm-$BUILD-x86_64.tar.xz; fi
 notifications:
   email: false
 
 branches:
   only:
     - master
+
+
