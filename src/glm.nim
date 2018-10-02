@@ -8,12 +8,12 @@ import nimpy
 import ./parser
 import ./ast
 
-proc loads(model: string, pretty: bool = false): string {. exportpy .} =
+proc loads(model: string): string {. exportpy .} =
     var p = initParser(model)
     p.walk()
     return $(p.ast.toJson())
 
-proc load(file: string, pretty: bool = false): string {. exportpy .} =
+proc load(file: string): string {. exportpy .} =
     var model = read_file(file)
     return loads(model)
 
@@ -36,7 +36,7 @@ proc main*(pathToFile: string, pretty = false): int =
     return 0
 
 
-when isMainModule:
+when isMainModule and appType != "lib":
     import cligen
     import os
     const versionString = staticExec("git rev-parse --verify HEAD --short")
