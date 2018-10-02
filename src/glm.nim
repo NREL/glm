@@ -33,8 +33,9 @@ proc main*(pathToFile: string, pretty = false): int =
 when isMainModule:
     import cligen
     import os
+    const versionString = staticExec("git rev-parse --verify HEAD --short")
     dispatchGen(main,
-              version = ("version", "glm v0.1.0"))
+              version = ("version", "glm (v0.1.0-dev " & versionString & ")"))
     if paramCount()==0:
         quit(dispatch_main(@["--help"]))
     else:
