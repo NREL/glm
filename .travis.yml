@@ -59,7 +59,7 @@ script:
   - mkdir -p glm-$BUILD-x86_64
   - mv bin/glm glm-$BUILD-x86_64
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-x86_64; fi
-  - nimble library -y -d:release --passc:"-flto" $CROSS
+  - nimble library$BUILD -y -d:release --passc:"-flto" $CROSS
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv lib/glm.pyd glm-$BUILD-x86_64; else mv lib/glm.so glm-$BUILD-x86_64; fi
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 dist/glm-$BUILD-x86_64.zip glm-$BUILD-x86_64; else tar cfJ dist/glm-$BUILD-x86_64.tar.xz glm-$BUILD-x86_64; fi
 

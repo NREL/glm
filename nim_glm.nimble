@@ -12,8 +12,9 @@ bin           = @["glm"]
 
 requires "nim >= 0.19.0", "cligen#head", "nimpy"
 
-task library, "build library":
-    when defined(crosswin):
-        exec("nim c --app:lib --out:lib/glm.pyd src/glm.nim")
-    else:
-        exec("nim c --app:lib --out:lib/glm.so src/glm.nim")
+task librarywindows, "build library":
+   exec("""nim c -d:crosswin -d:release --passc:"-flto" --app:lib --out:lib/glm.pyd src/glm.nim""")
+task libraryosx, "build library":
+   exec("""nim c -d:release --passc:"-flto" --app:lib --out:lib/glm.so src/glm.nim""")
+task librarylinux, "build library":
+   exec("""nim c -d:release --passc:"-flto" --app:lib --out:lib/glm.so src/glm.nim""")
