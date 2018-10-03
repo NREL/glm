@@ -67,7 +67,7 @@ after_success:
   - travis_retry curl -L https://github.com/tfausak/github-release/releases/download/1.2.2/github-release-$TRAVIS_OS_NAME.gz | gunzip > github-release
   - chmod a+x github-release
     # - ./github-release release --token=$GITHUB_TOKEN --owner=kdheepak --repo=travis-nim --title=$TRAVIS_TAG --tag=$TRAVIS_TAG
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then ./github-release upload --token=$GITHUB_TOKEN --owner=kdheepak --repo=nim-glm --file=dist/glm-$BUILD-x86_64.zip --tag=releases --name=glm-$BUILD-x86_64.zip; else ./github-release upload --token=$GITHUB_TOKEN --owner=kdheepak --repo=nim-glm --file=dist/glm-$BUILD-x86_64.tar.xz --tag=releases --name=glm-$BUILD-x86_64.tar.xz; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then ./github-release upload --token=$GITHUB_TOKEN --owner=NREL --repo=glm --file=dist/glm-$BUILD-x86_64.zip --tag=releases --name=glm-$BUILD-x86_64.zip; else ./github-release upload --token=$GITHUB_TOKEN --owner=NREL --repo=glm --file=dist/glm-$BUILD-x86_64.tar.xz --tag=releases --name=glm-$BUILD-x86_64.tar.xz; fi
 
 notifications:
   email: false
