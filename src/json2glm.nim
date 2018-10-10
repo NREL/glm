@@ -5,25 +5,10 @@ from logging as logger import nil
 import json
 import nimpy
 
-import ./parser
 import ./ast
 
-proc parse(file: string): AST =
-    var x = read_file(file)
-    var p = initParser(x)
-    p.walk()
-    return p.ast
-
 proc main*(pathToFile: string, pretty = false): int =
-    ## Convert from glm to json
-
-    # logger.info("Running main procedure.")
-    # logger.debug("Received path_to_file: " & path_to_file)
-    var ast = parse(path_to_file)
-    if pretty:
-        stdout.write ast.toJson().pretty(), "\n"
-    else:
-        stdout.write ast.toJson(), "\n"
+    ## Convert from json to glm
     return 0
 
 
@@ -32,9 +17,10 @@ when isMainModule and appType != "lib":
     import os
     const versionString = staticExec("git rev-parse --verify HEAD --short")
     dispatchGen(main,
-              version = ("version", "glm2json (v0.1.0-dev " & versionString & ")"))
+              version = ("version", "json2glm (v0.1.0-dev " & versionString & ")"))
     if paramCount()==0:
         quit(dispatch_main(@["--help"]))
     else:
         quit(dispatch_main(commandLineParams()))
+
 

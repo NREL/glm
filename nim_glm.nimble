@@ -6,7 +6,7 @@ description   = "GLM package"
 license       = "MIT"
 srcDir        = "src"
 binDir        = "bin"
-bin           = @["glm2json"]
+bin           = @["glm2json", "json2glm"]
 
 # Dependencies
 
