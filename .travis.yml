@@ -58,7 +58,7 @@ script:
   - nimble build -y -d:release --passc:"-flto" $CROSS
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip bin/glm pcre64.dll; else strip bin/glm; fi
   - mkdir -p glm-$BUILD-amd64
-  - mv bin/glm glm-$BUILD-amd64
+  - mv bin/* glm-$BUILD-amd64
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-amd64; fi
   - nimble library$BUILD -y -d:release --passc:"-flto" $CROSS
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv lib/glm.pyd glm-$BUILD-amd64; else mv lib/glm.so glm-$BUILD-amd64; fi
