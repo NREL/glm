@@ -1,4 +1,4 @@
-# glm
+# glm [![Build Status](https://travis-ci.com/NREL/glm.svg?branch=master)](https://travis-ci.com/NREL/glm)
 
 Fast GridLAB-D file format parser
 
