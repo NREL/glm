@@ -51,23 +51,27 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then export CC=x86_64-w64-mingw32-gcc; fi
 
 script:
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then export GITHUB_RELEASE_FILENAME="./dist/glm-$BUILD-amd64.zip"; else export GITHUB_RELEASE_FILENAME="./dist/glm-$BUILD-amd64.tar.xz"; fi
   - mkdir -p dist
   # pcre64.dll/pcre32.dll must be distributed with the Windows executable
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then curl -O https://nim-lang.org/download/dlls.zip; unzip dlls.zip; fi
   - nimble build -y -d:release --passc:"-flto" $CROSS
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip bin/glm pcre64.dll; else strip bin/glm; fi
-  - mkdir -p glm-$BUILD-x86_64
-  - mv bin/glm glm-$BUILD-x86_64
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-x86_64; fi
+  - mkdir -p glm-$BUILD-amd64
+  - mv bin/glm glm-$BUILD-amd64
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-amd64; fi
   - nimble library$BUILD -y -d:release --passc:"-flto" $CROSS
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv lib/glm.pyd glm-$BUILD-x86_64; else mv lib/glm.so glm-$BUILD-x86_64; fi
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 dist/glm-$BUILD-x86_64.zip glm-$BUILD-x86_64; else tar cfJ dist/glm-$BUILD-x86_64.tar.xz glm-$BUILD-x86_64; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv lib/glm.pyd glm-$BUILD-amd64; else mv lib/glm.so glm-$BUILD-amd64; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 $GITHUB_RELEASE_FILENAME glm-$BUILD-amd64; else tar cfJ $GITHUB_RELEASE_FILENAME glm-$BUILD-amd64; fi
 
 after_success:
-  - travis_retry curl -L https://github.com/tfausak/github-release/releases/download/1.2.2/github-release-$TRAVIS_OS_NAME.gz | gunzip > github-release
+  - travis_retry curl -LO https://github.com/kdheepak/github-release/releases/download/v0.1.4/github-release-$TRAVIS_OS_NAME-amd64.tar.xz
+  - tar -xvf github-release-$TRAVIS_OS_NAME-amd64.tar.xz
+  - cp ./github-release-$TRAVIS_OS_NAME-amd64/github-release .
   - chmod a+x github-release
-    # - ./github-release release --token=$GITHUB_TOKEN --owner=kdheepak --repo=travis-nim --title=$TRAVIS_TAG --tag=$TRAVIS_TAG
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then ./github-release upload --token=$GITHUB_TOKEN --owner=NREL --repo=glm --file=dist/glm-$BUILD-x86_64.zip --tag=releases --name=glm-$BUILD-x86_64.zip; else ./github-release upload --token=$GITHUB_TOKEN --owner=NREL --repo=glm --file=dist/glm-$BUILD-x86_64.tar.xz --tag=releases --name=glm-$BUILD-x86_64.tar.xz; fi
+  - ./github-release upload --token=$GITHUB_TOKEN --owner=NREL --repo=glm --tag=releases --file=$GITHUB_RELEASE_FILENAME
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release create --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG"; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "$GITHUB_RELEASE_FILENAME"; fi
 
 notifications:
   email: false
