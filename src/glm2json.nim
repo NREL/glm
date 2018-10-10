@@ -14,7 +14,7 @@ proc parse(file: string): AST =
     p.walk()
     return p.ast
 
-proc main*(pathToFile: string, pretty = false): int =
+proc glm2json*(pathToFile: string, pretty = false): int =
     ## Convert from glm to json
 
     # logger.info("Running main procedure.")
@@ -31,7 +31,7 @@ when isMainModule and appType != "lib":
     import cligen
     import os
     const versionString = staticExec("git rev-parse --verify HEAD --short")
-    dispatchGen(main,
+    dispatchGen(glm2json,
               version = ("version", "glm2json (v0.1.0-dev " & versionString & ")"))
     if paramCount()==0:
         quit(dispatch_main(@["--help"]))
