@@ -30,11 +30,6 @@ proc glm2json*(pathToFile: string, pretty = false): int =
 when isMainModule and appType != "lib":
     import cligen
     import os
-    const versionString = staticExec("git rev-parse --verify HEAD --short")
-    dispatchGen(glm2json,
-              version = ("version", "glm2json (v0.1.0-dev " & versionString & ")"))
-    if paramCount()==0:
-        quit(dispatch_main(@["--help"]))
-    else:
-        quit(dispatch_main(commandLineParams()))
+    const versionString = staticExec("git describe --tags HEAD")
+    dispatch(glm2json, version=("version", "glm (" & versionString & ")"))
 

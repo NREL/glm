@@ -23,26 +23,3 @@ proc parse(file: string): AST =
     p.walk()
     return p.ast
 
-proc main*(pathToFile: string, pretty = false): int =
-    ## Convert from glm/json to json/glm
-
-    # logger.info("Running main procedure.")
-    # logger.debug("Received path_to_file: " & path_to_file)
-    var ast = parse(path_to_file)
-    if pretty:
-        stdout.write ast.toJson().pretty(), "\n"
-    else:
-        stdout.write ast.toJson(), "\n"
-    return 0
-
-
-when isMainModule and appType != "lib":
-    import cligen
-    import os
-    const versionString = staticExec("git rev-parse --verify HEAD --short")
-    dispatchGen(main,
-              version = ("version", "glm (v0.1.0-dev " & versionString & ")"))
-    if paramCount()==0:
-        quit(dispatch_main(@["--help"]))
-    else:
-        quit(dispatch_main(commandLineParams()))

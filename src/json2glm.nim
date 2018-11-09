@@ -7,7 +7,7 @@ import nimpy
 
 import ./ast
 
-proc main*(pathToFile: string, pretty = false): int =
+proc json2glm*(pathToFile: string, pretty = false): int =
     ## Convert from json to glm
     return 0
 
@@ -15,12 +15,8 @@ proc main*(pathToFile: string, pretty = false): int =
 when isMainModule and appType != "lib":
     import cligen
     import os
-    const versionString = staticExec("git rev-parse --verify HEAD --short")
-    dispatchGen(main,
-              version = ("version", "json2glm (v0.1.0-dev " & versionString & ")"))
-    if paramCount()==0:
-        quit(dispatch_main(@["--help"]))
-    else:
-        quit(dispatch_main(commandLineParams()))
+    const versionString = staticExec("git describe --tags HEAD")
+    dispatch(json2glm, version=("version", "glm (" & versionString & ")"))
+
 
 
