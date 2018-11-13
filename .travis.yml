@@ -51,7 +51,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then export CC=x86_64-w64-mingw32-gcc; fi
 
 script:
-  - nimble test
+  - nimble test -y
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then export GITHUB_RELEASE_FILENAME="./dist/glm-$BUILD-amd64.zip"; else export GITHUB_RELEASE_FILENAME="./dist/glm-$BUILD-amd64.tar.xz"; fi
   - mkdir -p dist
   # pcre64.dll/pcre32.dll must be distributed with the Windows executable
