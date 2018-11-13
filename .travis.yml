@@ -57,7 +57,7 @@ script:
   # pcre64.dll/pcre32.dll must be distributed with the Windows executable
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then curl -O https://nim-lang.org/download/dlls.zip; unzip dlls.zip; fi
   - nimble build -y -d:release --passc:"-flto" $CROSS
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip bin/glm pcre64.dll; else strip bin/glm; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip bin/glm2json bin/json2glm pcre64.dll; else strip bin/glm2json bin/json2glm; fi
   - mkdir -p glm-$BUILD-amd64
   - mv bin/* glm-$BUILD-amd64
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then mv pcre64.dll glm-$BUILD-amd64; fi
@@ -70,7 +70,6 @@ after_success:
   - tar -xvf github-release-$TRAVIS_OS_NAME-amd64.tar.xz
   - cp ./github-release-$TRAVIS_OS_NAME-amd64/github-release .
   - chmod a+x github-release
-  - ./github-release upload --token=$GITHUB_TOKEN --owner=NREL --repo=glm --tag=releases --file=$GITHUB_RELEASE_FILENAME
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release create --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG"; fi
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "$GITHUB_RELEASE_FILENAME"; fi
 
