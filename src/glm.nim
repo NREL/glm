@@ -13,9 +13,11 @@ proc loads(model: string): string {. exportpy .} =
     p.walk()
     return $(p.ast.toJson())
 
-proc load(file: string): string {. exportpy .} =
+proc load(file: string): PyObject {. exportpy .} =
     var model = read_file(file)
-    return loads(model)
+    let x = loads(model)
+    return pyImport("json").loads(x)
+
 
 proc parse(file: string): AST =
     var x = read_file(file)
