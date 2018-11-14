@@ -1,6 +1,31 @@
 # glm [![Build Status](https://travis-ci.com/NREL/glm.svg?branch=master)](https://travis-ci.com/NREL/glm)
 
-Fast GridLAB-D file format parser
+A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format parser.
+
+![](./docs/img/python-example.png)
+
+## Install
+
+**Windows**
+
+```
+curl -LO 'https://github.com/NREL/glm/releases/download/v0.1.1/glm-windows-amd64.zip'
+unzip glm-windows-amd64.zip
+```
+
+**OSX**
+
+```
+curl -LO 'https://github.com/NREL/glm/releases/download/v0.1.1/glm-osx-amd64.tar.xz'
+tar -zxvf glm-osx-amd64.zip
+```
+
+**Linux**
+
+```
+curl -LO 'https://github.com/NREL/glm/releases/download/v0.1.1/glm-linux-amd64.tar.xz'
+tar -zxvf glm-linux-amd64.zip
+```
 
 ## Documentation
 
@@ -1007,4 +1032,6 @@ Convert from glm/json to json/glm
   "schedules": []
 }
 ```
+
+
 
