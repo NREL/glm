@@ -14,7 +14,7 @@ when isMainModule:
         test "lexer":
             check:
                 t[^1] of Token
-                (t).len == 436
+                (t).len == 437
                 t[^1].lexeme == "\0"
                 t[^1].kind == tk_eof
 
