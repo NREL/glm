@@ -69,7 +69,7 @@ proc parse_rvalue(p: var Parser): string =
     var rvalue : seq[string]
 
     while p.peek().kind != tk_semicolon:
-        if p.peek().kind == tk_newline:
+        if p.peek().kind == tk_newline or p.peek().kind == tk_eof:
             reportError(p.peek(), p.lexer.source)
             raise newException(ParserError, "Unexpected newline character. Expected semicolon.")
         rvalue.add( p.advance().lexeme )

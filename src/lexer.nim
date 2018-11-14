@@ -51,7 +51,7 @@ proc `$`*(t: Token): string =
 proc reportError*(t: Token, source: string) =
     let line_index= t.line_index
 
-    var source_text = source.splitLines()[line_index - 1]
+    var source_text = source.splitLines()[line_index]
 
     var start_index = t.start_index
     let end_index = t.end_index
@@ -214,6 +214,7 @@ proc scanToken(lex: var Lexer) =
 proc scanTokens*(lex: var Lexer): seq[Token] =
     while not lex.isAtEnd():
         lex.scanToken()
+    lex.scanToken()
     lex.addToken(
         "\0",
         tk_eof,
