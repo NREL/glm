@@ -9,25 +9,32 @@ A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format p
 **Windows**
 
 ```
-curl -LO 'https://github.com/NREL/glm/releases/download/latest/glm-windows-amd64.zip'
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+curl -LO 'https://github.com/NREL/glm/releases/download/$VERSION/glm-windows-amd64.zip'
 unzip glm-windows-amd64.zip
 ```
 
 **OSX**
 
 ```
-curl -LO 'https://github.com/NREL/glm/releases/download/latest/glm-osx-amd64.tar.xz'
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+curl -LO 'https://github.com/NREL/glm/releases/download/$VERSION/glm-osx-amd64.tar.xz'
 tar -zxvf glm-osx-amd64.zip
 ```
 
 **Linux**
 
 ```
-curl -LO 'https://github.com/NREL/glm/releases/download/latest/glm-linux-amd64.tar.xz'
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+curl -LO 'https://github.com/NREL/glm/releases/download/$VERSION/glm-linux-amd64.tar.xz'
 tar -zxvf glm-linux-amd64.zip
 ```
 
+The contents of the compressed archive will contain a command line executable, and a module that can be imported into Python.
+
 ## Documentation
+
+You can use this
 
 ```
 Usage:
