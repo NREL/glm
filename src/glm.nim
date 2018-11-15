@@ -8,20 +8,12 @@ import nimpy
 import ./parser
 import ./ast
 
-proc loads(model: string): string {. exportpy .} =
+proc loads(model: string): PyObject {. exportpy .} =
     var p = initParser(model)
     p.walk()
-    return $(p.ast.toJson())
+    return pyImport("json").loads($(p.ast.toJson()))
 
 proc load(file: string): PyObject {. exportpy .} =
     var model = read_file(file)
-    let x = loads(model)
-    return pyImport("json").loads(x)
-
-
-proc parse(file: string): AST =
-    var x = read_file(file)
-    var p = initParser(x)
-    p.walk()
-    return p.ast
+    return loads(model)
 
