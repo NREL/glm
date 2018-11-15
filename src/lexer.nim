@@ -2,6 +2,8 @@ import strutils
 import strformat
 import tokens
 import tables
+import terminal
+
 from utils import nil
 
 const ENDMARK = '\0'
@@ -48,6 +50,14 @@ proc `$`*(t: Token): string =
         discard
     fmt"<Token(""{lexeme}"", {t.kind})>"
 
+
+template glm_echo*(s: string; fg: ForegroundColor; styleSet: set[Style] = {}; newline = true; brightFg = false) =
+  setForeGroundColor(fg, brightFg)
+  s.writeStyled(styleSet)
+  resetAttributes()
+  if newline:
+    echo ""
+
 proc reportError*(t: Token, source: string) =
     let line_index= t.line_index
 
@@ -55,14 +65,24 @@ proc reportError*(t: Token, source: string) =
 
     var start_index = t.start_index
     let end_index = t.end_index
-    var ntabs = source_text[0..start_index].count('\t')
+    var ntabs = source_text[0..<start_index].count('\t')
 
-    echo &"Error on line: {line_index}"
-    echo source_text
+    glm_echo "ParserError", fgRed, newline=false
+    glm_echo &" [line: {line_index}, column: {start_index}]", fgWhite, {styleBright}
+
+    glm_echo "Hint: ", fgGreen, newline=false
+
+    echo " The following line may be the source of the error: "
+
+    glm_echo source_text, fgWhite, {styleBright}
+
     if start_index != end_index:
-        echo "^".repeat( end_index - start_index ).align( (ntabs * 7) + end_index + 1 )
+        glm_echo "^".repeat( end_index - start_index ).align( (ntabs * 7) + end_index + 1 ), fgWhite, {styleBright}
     else:
-        echo "^".align( (ntabs * 7) + start_index + 1)
+        glm_echo "^".align( (ntabs * 7) + start_index + 1), fgWhite, {styleBright}
+
+    glm_echo "Hint: ", fgGreen, newline=false
+    echo "If you think this is not desired behaviour, please contact the developers at https://github.com/NREL/glm"
 
 proc reportError*(lex: var Lexer, c: char) =
     # TODO: improve error reporting

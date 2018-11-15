@@ -12,7 +12,7 @@ type
         current*: int
         tokens*: seq[Token]
         ast*: AST
-    ParserError = object of Exception
+    ParserError* = object of Exception
 
 proc initParser*(data: string): Parser =
     var l = initLexer(data)
