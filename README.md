@@ -10,7 +10,7 @@ A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format p
 
 ```
 export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-curl -LO 'https://github.com/NREL/glm/releases/download/$VERSION/glm-windows-amd64.zip'
+curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-windows-amd64.zip"
 unzip glm-windows-amd64.zip
 ```
 
@@ -18,7 +18,7 @@ unzip glm-windows-amd64.zip
 
 ```
 export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-curl -LO 'https://github.com/NREL/glm/releases/download/$VERSION/glm-osx-amd64.tar.xz'
+curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-osx-amd64.tar.xz"
 tar -zxvf glm-osx-amd64.zip
 ```
 
@@ -26,7 +26,7 @@ tar -zxvf glm-osx-amd64.zip
 
 ```
 export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-curl -LO 'https://github.com/NREL/glm/releases/download/$VERSION/glm-linux-amd64.tar.xz'
+curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-linux-amd64.tar.xz"
 tar -zxvf glm-linux-amd64.zip
 ```
 
