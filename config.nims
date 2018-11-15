@@ -1,3 +1,6 @@
+
+--d:release
+
 when defined(crosswin):
   switch("cc", "gcc")
   const arch =
@@ -14,4 +17,3 @@ when defined(crosswin):
   switch("define", "windows")
 else:
   echo "Not running windows"
-
