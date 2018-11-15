@@ -164,6 +164,11 @@ proc parse_object(p: var Parser): Object=
     let t_object = p.advance(tk_newline, tk_space)
     var object_name = t_object.lexeme
 
+    if p.peek().kind == tk_period:
+        p.advance()
+        while p.peek().lexeme != " ":
+            object_name = object_name & "." & p.advance().lexeme
+
     if p.peek().kind == tk_colon:
         p.advance()
         while p.peek().lexeme != " ":
