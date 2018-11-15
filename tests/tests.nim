@@ -2,6 +2,7 @@ import ../src/lexer
 import ../src/tokens
 import ../src/glm2json
 import ../src/ast
+import ../src/parser
 
 import json
 
@@ -34,6 +35,22 @@ when isMainModule:
                 l1 == readFile("./tests/data/4node.json").parseJson()
                 l2 == readFile("./tests/data/powerflow_IEEE_4node.json").parseJson()
 
+    suite "test error":
+
+        test "exceptions":
+            try:
+                var p = initParser("""
+			    clock {
+	 			    timestamp '2000-01-01 0:00:00';
+	 			    timezone EST+5EDT;
+				    };
+
+			    #define stylesheet=gridlab-d.svn.sourceforge.net/viewvc/gridlab-d/trunk/core/gridlabd-2_0
+                """)
+                p.walk()
+                discard p.ast.toJson()
+            except Exception as e:
+                check(true)
 
     suite "test IEEE-13":
 
