@@ -19,7 +19,7 @@ unzip glm-windows-amd64.zip
 ```
 export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
 curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-osx-amd64.tar.xz"
-tar -zxvf glm-osx-amd64.zip
+tar -zxvf glm-osx-amd64.tar.xz
 ```
 
 **Linux**
@@ -27,7 +27,7 @@ tar -zxvf glm-osx-amd64.zip
 ```
 export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
 curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-linux-amd64.tar.xz"
-tar -zxvf glm-linux-amd64.zip
+tar -zxvf glm-linux-amd64.tar.xz
 ```
 
 The contents of the compressed archive will contain a command line executable, and a module that can be imported into Python.
