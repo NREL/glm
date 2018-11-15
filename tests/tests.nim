@@ -49,6 +49,19 @@ when isMainModule:
                 l2 == readFile("./tests/data/IEEE_13_Node_Test_Feeder.json").parseJson()
                 l3 == readFile("./tests/data/IEEE_13_Node_With_Houses.json").parseJson()
 
+    suite "test taxonomy_feeder_R1-12.47-1":
+
+        setup:
+            var
+                l1 = parse("./tests/data/taxonomy_feeder_R1-12.47-1.glm").toJson()
+
+        test "parser":
+            check:
+                l1 == readFile("./tests/data/taxonomy_feeder_R1-12.47-1.json").parseJson()
+
+
+
+
 
 
 
