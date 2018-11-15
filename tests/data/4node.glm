@@ -4,11 +4,14 @@
 clock {
 	 timestamp '2000-01-01 0:00:00';
 	 timezone EST+5EDT;
-}
+};
 
 ////////////////////////////////////////////////////////
 // modules
 module powerflow;
+
+module tape {
+};
 
 // 336,400 26/7
 object overhead_line_conductor:100 {
@@ -102,3 +105,13 @@ object node {
 	//phaseB_V -62-107.38715006927j;
 	//phaseC_V -62+107.38715006927j;
 }
+
+object tape.recorder {
+    interval 4.0;
+    parent network_node2;
+    limit 21600;
+    file ./csv_output/network_node2.csv;
+    property measured_real_power, measured_real_energy, voltage_A, voltage_B, voltage_C;
+};
+
+

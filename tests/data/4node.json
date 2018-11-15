@@ -109,14 +109,30 @@
         "nominal_voltage": "124.0"
       },
       "children": []
+    },
+    {
+      "name": "tape.recorder",
+      "attributes": {
+        "interval": "4.0",
+        "parent": "network_node2",
+        "limit": "21600",
+        "file": "./csv_output/network_node2.csv",
+        "property": "measured_real_power, measured_real_energy, voltage_A, voltage_B, voltage_C"
+      },
+      "children": []
     }
   ],
   "modules": [
     {
       "name": "powerflow",
       "attributes": {}
+    },
+    {
+      "name": "tape",
+      "attributes": {}
     }
   ],
   "directives": [],
   "schedules": []
 }
+
