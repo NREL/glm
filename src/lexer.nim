@@ -51,7 +51,7 @@ proc `$`*(t: Token): string =
 proc reportError*(t: Token, source: string) =
     let line_index= t.line_index
 
-    var source_text = source.splitLines()[line_index]
+    var source_text = source.splitLines()[line_index - 1]
 
     var start_index = t.start_index
     let end_index = t.end_index
@@ -64,7 +64,6 @@ proc reportError*(t: Token, source: string) =
     else:
         echo "^".align( (ntabs * 7) + start_index + 1)
 
-    # echo source_text[start_index..end_index]
 proc reportError*(lex: var Lexer, c: char) =
     # TODO: improve error reporting
     echo &"Unknown symbol : {c}"

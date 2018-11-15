@@ -94,6 +94,8 @@ proc parse_clock(p: var Parser): Clock =
 
         o.add(lvalue, newJString(rvalue))
 
+    p.ignore(tk_semicolon)
+
     let c = Clock(attributes: o)
     return c
 
