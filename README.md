@@ -9,21 +9,21 @@ A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format p
 **Windows**
 
 ```
-curl -LO 'https://github.com/NREL/glm/releases/download/v0.1.1/glm-windows-amd64.zip'
+curl -LO 'https://github.com/NREL/glm/releases/download/latest/glm-windows-amd64.zip'
 unzip glm-windows-amd64.zip
 ```
 
 **OSX**
 
 ```
-curl -LO 'https://github.com/NREL/glm/releases/download/v0.1.1/glm-osx-amd64.tar.xz'
+curl -LO 'https://github.com/NREL/glm/releases/download/latest/glm-osx-amd64.tar.xz'
 tar -zxvf glm-osx-amd64.zip
 ```
 
 **Linux**
 
 ```
-curl -LO 'https://github.com/NREL/glm/releases/download/v0.1.1/glm-linux-amd64.tar.xz'
+curl -LO 'https://github.com/NREL/glm/releases/download/latest/glm-linux-amd64.tar.xz'
 tar -zxvf glm-linux-amd64.zip
 ```
 
