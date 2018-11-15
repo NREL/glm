@@ -8,7 +8,7 @@ import nimpy
 import ./parser
 import ./ast
 
-proc parse(file: string): AST =
+proc parse*(file: string): AST =
     var x = read_file(file)
     var p = initParser(x)
     p.walk()
