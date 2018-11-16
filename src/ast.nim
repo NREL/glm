@@ -1,5 +1,6 @@
 import json
 import strformat
+import strutils
 import typetraits
 
 type
@@ -70,6 +71,122 @@ proc `$`*(p: GLD): string =
     else:
         &"<{p.type}()>"
 
+proc toObject*(jn: JsonNode): Object =
+    new result
+    result.name = $(jn["name"])
+    result.attributes = jn["attributes"]
+    for child in jn["children"]:
+        result.children.add(toObject(child))
+    return result
+
+proc toModule*(jn: JsonNode): Module =
+    new result
+    result.name = $(jn["name"])
+    result.attributes = jn["attributes"]
+    return result
+
+proc toInclude*(jn: JsonNode): Include =
+    new result
+    result.value = $(jn["value"])
+    return result
+
+proc toDirective*(jn: JsonNode): Directive =
+    new result
+    result.name = $(jn["name"])
+    result.value = $(jn["value"])
+    return result
+
+proc toDefinition*(jn: JsonNode): Definition =
+    new result
+    result.name = $(jn["name"])
+    result.value = $(jn["value"])
+    return result
+
+proc toClock*(jn: JsonNode): Clock =
+    new result
+    result.attributes = jn
+    return result
+
+proc toSchedule*(jn: JsonNode): Schedule =
+    new result
+    result.name = $(jn["name"])
+    for v in jn["values"]:
+        result.values.add($(jn["values"]))
+    return result
+
+proc toAst*(jn: JsonNode): AST =
+    new result
+
+    result.clock = jn["clock"].toClock()
+
+    for json_node in jn["objects"]:
+        result.objects.add json_node.toObject()
+    for json_node in jn["modules"]:
+        result.modules.add json_node.toModule()
+    for json_node in jn["definitions"]:
+        result.definitions.add json_node.toDefinition()
+    for json_node in jn["directives"]:
+        result.directives.add json_node.toDirective()
+    for json_node in jn["schedules"]:
+        result.schedules.add json_node.toSchedule()
+
+    result
+
+proc toGlmAttributes(jn: JsonNode): string =
+
+    for key, val in jn:
+        result = result & "\t" & key.strip(chars={'"'}) & " "
+        if " " in $(val):
+            result = result & ($val) & ";\n"
+        else:
+            result = result & ($val).strip(chars={'"'}) & ";\n"
+
+proc toGlm*(ast: AST): string =
+    result = result & "clock {\n"
+    result = result & toGlmAttributes(ast.clock.attributes)
+    result = result & "};"
+
+    result = result & "\n\n"
+
+    for directive in ast.directives:
+        result = result & "#set " & directive.name.strip(chars={'"'}) & "=" & directive.value.strip(chars={'"'}) & ";\n"
+
+    result = result & "\n"
+
+    for definition in ast.definitions:
+        result = result & "#define " & definition.name.strip(chars={'"'}) & "=" & definition.value.strip(chars={'"'}) & ";\n"
+
+    result = result & "\n"
+
+    for glm_include in ast.includes:
+        result = result & "#include " & glm_include.value.strip(chars={'"'}) & ";\n"
+
+    result = result & "\n"
+
+    for schedule in ast.schedules:
+        result = result & "schedule " & schedule.name.strip(chars={'"'}) & " {\n"
+        for val in schedule.values:
+            result = result & "\t" & val & ";\n"
+        result = result & "};"
+        result = result & "\n\n"
+
+    result = result & "\n\n"
+
+    for module in ast.modules:
+        result = result & "module " & module.name.strip(chars={'"'}) & " {\n"
+        result = result & toGlmAttributes(module.attributes)
+        result = result & "};"
+        result = result & "\n\n"
+
+    result = result & "\n\n"
+
+    for obj in ast.objects:
+        result = result & "object " & obj.name.strip(chars={'"'}) & " {\n"
+        result = result & toGlmAttributes(obj.attributes)
+        result = result & "};"
+        result = result & "\n\n"
+
+
 proc toJson(o: Object): JsonNode =
     var gldJObject = newJObject()
     gldJObject.add("name", newJString(o.name))
@@ -133,6 +250,7 @@ proc toJson*(ast: AST): JsonNode =
     j.add("objects", objectsArray)
     j.add("modules", modulesArray)
     j.add("directives", directivesArray)
+    j.add("definitions", definitionsArray)
     j.add("schedules", schedulesArray)
 
     var gldJObject: JsonNode

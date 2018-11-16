@@ -8,12 +8,17 @@ import nimpy
 import ./parser
 import ./ast
 
-proc loads(model: string): PyObject {. exportpy .} =
-    var p = initParser(model)
+proc loads(data: string): PyObject {. exportpy .} =
+    var p = initParser(data)
     p.walk()
     return pyImport("json").loads($(p.ast.toJson()))
 
 proc load(file: string): PyObject {. exportpy .} =
-    var model = read_file(file)
-    return loads(model)
+    var data = read_file(file)
+    return loads(data)
+
+proc dumps(data: PyObject): string {. exportpy .} =
+
+    let jsdata = nimpy.toJson( data )
+    jsdata.toAst().toGlm()
 
