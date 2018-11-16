@@ -18,7 +18,12 @@ proc load(file: string): PyObject {. exportpy .} =
     return loads(data)
 
 proc dumps(data: PyObject): string {. exportpy .} =
-
     let jsdata = nimpy.toJson( data )
     jsdata.toAst().toGlm()
+
+proc dump(data: PyObject, file): int {. exportpy .} =
+    let jsdata = nimpy.toJson( data )
+    let glm = jsdata.toAst().toGlm()
+    writeFile(file, glm)
+
 
