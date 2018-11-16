@@ -52,7 +52,7 @@ when isMainModule:
             except Exception as e:
                 check(true)
 
-    suite "test IEEE-13":
+    suite "test IEEE-13 glm":
 
         setup:
             var
@@ -65,6 +65,16 @@ when isMainModule:
                 l1 == readFile("./tests/data/IEEE-13.json").parseJson()
                 l2 == readFile("./tests/data/IEEE_13_Node_Test_Feeder.json").parseJson()
                 l3 == readFile("./tests/data/IEEE_13_Node_With_Houses.json").parseJson()
+
+    suite "test powerflow IEEE 4node json":
+
+        setup:
+            var
+                l1 = parseJson(readFile("./tests/data/powerflow_IEEE_4node.json"))
+
+        test "parser":
+            check:
+                l1.toAst().toGlm() == readFile("./tests/data/powerflow_IEEE_4node.glm")
 
     suite "test taxonomy_feeder_R1-12.47-1":
 
