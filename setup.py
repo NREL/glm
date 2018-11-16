@@ -15,6 +15,9 @@ class BinaryDistribution(Distribution):
     def has_ext_modules(self):
         return True
 
+    def is_pure(self):
+        return False
+
 
 version = (
     subprocess.check_output(shlex.split("git describe --tags HEAD"))
@@ -49,7 +52,6 @@ setup(
     version=version,
     description="glm Python library",
     packages=["glm"],
-    scripts=["bin/glm2json", "bin/json2glm"],
     author="Dheepak Krishnamurthy",
     author_email="me@kdheepak.com",
     url="https://github.com/NREL/glm",
