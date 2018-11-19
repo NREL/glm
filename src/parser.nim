@@ -12,6 +12,7 @@ type
         current*: int
         tokens*: seq[Token]
         ast*: AST
+        filename*: string
     ParserError* = object of Exception
 
 proc initParser*(data: string): Parser =
@@ -23,9 +24,13 @@ proc initParser*(data: string): Parser =
         tokens: l.tokens,
         ast: AST(
             clock: nil,
-        )
+        ),
+        filename: ""
     )
     return p
+
+proc updateFilename(p: Parser, filename: string) =
+    p.filename = filename
 
 proc previous(p: Parser): Token = p.tokens[p.current - 1]
 
@@ -50,8 +55,9 @@ proc expect(p: var Parser, kind: TokenKind): Token {.discardable.} =
     if t.kind == kind:
         return t
     else:
-        reportError(t, p.lexer.source)
-        raise newException(ParserError, &"Expected {kind}, but got {t.lexeme}")
+        let hint = &"Unable to parse {p.filename}. Expected {kind}, but got {t.lexeme}"
+        reportError(t, p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 proc check(p: Parser, kind: TokenKind): bool =
     if p.isAtEnd():
@@ -70,8 +76,9 @@ proc parse_rvalue(p: var Parser): string =
 
     while p.peek().kind != tk_semicolon:
         if p.peek().kind == tk_newline or p.peek().kind == tk_eof:
-            reportError(p.peek(), p.lexer.source)
-            raise newException(ParserError, "Unexpected newline character. Expected semicolon.")
+            let hint = &"Unable to parse {p.filename}. Unexpected newline character. Expected semicolon."
+            reportError(p.peek(), p.lexer.source, hint)
+            raise newException(ParserError, hint)
         rvalue.add( p.advance().lexeme )
 
     p.advance()
@@ -128,8 +135,9 @@ proc parse_module(p: var Parser): Module =
         return m
 
     else:
-        reportError(t, p.lexer.source)
-        raise newException(ParserError, "Failed to parse module.")
+        let hint = &"Unable to parse {p.filename}. Failed to parse module."
+        reportError(t, p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 proc parse_class(p: var Parser): Class=
     assert p.previous().kind == tk_class
@@ -154,8 +162,9 @@ proc parse_class(p: var Parser): Class=
 
         return c
     else:
-        reportError(t, p.lexer.source)
-        raise newException(ParserError, fmt"Failed to parse class. Expected {{ but found {t.lexeme}")
+        let hint = fmt"Unable to parse {p.filename}. Failed to parse class. Expected {{ but found {t.lexeme}"
+        reportError(t, p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 
 proc parse_object(p: var Parser): Object=
@@ -197,8 +206,9 @@ proc parse_object(p: var Parser): Object=
 
         return m
     else:
-        reportError(t, p.lexer.source)
-        raise newException(ParserError, fmt"Failed to parse object. Expected {{ but found {t.lexeme}")
+        let hint = fmt"Unable to parse {p.filename}. Failed to parse object. Expected {{ but found {t.lexeme}"
+        reportError(t, p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 proc parse_schedule(p: var Parser): Schedule =
     assert p.previous().kind == tk_schedule
@@ -224,8 +234,9 @@ proc parse_schedule(p: var Parser): Schedule =
 
         return s
     else:
-        reportError(t, p.lexer.source)
-        raise newException(ParserError, "Failed to parse schedule.")
+        let hint = &"Unable to parse {p.filename}. Failed to parse schedule."
+        reportError(t, p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 proc parse_include(p: var Parser): Include =
     assert p.previous().kind == tk_hash
@@ -247,8 +258,9 @@ proc parse_directive(p: var Parser): Directive =
         let d = Directive(name: name, value: rvalue)
         return d
     else:
-        reportError(p.peek(), p.lexer.source)
-        raise newException(ParserError, "Failed to parse directive.")
+        let hint = &"Unable to parse {p.filename}. Failed to parse directive."
+        reportError(p.peek(), p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 proc parse_definition(p: var Parser): Definition =
     assert p.previous().kind == tk_hash
@@ -261,8 +273,9 @@ proc parse_definition(p: var Parser): Definition =
         let d = Definition(name: name, value: rvalue)
         return d
     else:
-        reportError(p.peek(), p.lexer.source)
-        raise newException(ParserError, "Failed to parse definition.")
+        let hint = &"Unable to parse {p.filename}. Failed to parse definition."
+        reportError(p.peek(), p.lexer.source, hint)
+        raise newException(ParserError, hint)
 
 proc walk*(p: var Parser) =
     # TODO: support gui
@@ -312,8 +325,9 @@ proc walk*(p: var Parser) =
             # echo p.current
             # for i, t in p.tokens:
                 # echo i, " ", t
-            reportError(t, p.lexer.source)
-            raise newException(ParserError, "Unknown token encountered")
+            let hint = &"Unable to parse {p.filename}. Unknown token encountered"
+            reportError(t, p.lexer.source, hint)
+            raise newException(ParserError, hint)
 
 if isMainModule:
 

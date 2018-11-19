@@ -58,7 +58,7 @@ template glm_echo*(s: string; fg: ForegroundColor; styleSet: set[Style] = {}; ne
   if newline:
     echo ""
 
-proc reportError*(t: Token, source: string) =
+proc reportError*(t: Token, source: string, hint: string = "") =
     let line_index= t.line_index
 
     var source_text = source.splitLines()[line_index - 1]
@@ -67,8 +67,10 @@ proc reportError*(t: Token, source: string) =
     let end_index = t.end_index
     var ntabs = source_text[0..<start_index].count('\t')
 
-    glm_echo "ParserError", fgRed, newline=false
-    glm_echo &" [line: {line_index}, column: {start_index}]", fgWhite, {styleBright}
+
+    glm_echo "ParserError: ", fgRed, newline=false
+    glm_echo &"[line: {line_index}, column: {start_index}]", fgWhite, {styleBright}, newline=false
+    echo &" {hint}"
 
     glm_echo "Hint: ", fgGreen, newline=false
 
@@ -81,7 +83,6 @@ proc reportError*(t: Token, source: string) =
     else:
         glm_echo "^".align( (ntabs * 7) + start_index + 1), fgWhite, {styleBright}
 
-    glm_echo "Hint: ", fgGreen, newline=false
     echo "If you think this is not desired behaviour, please contact the developers at https://github.com/NREL/glm"
 
 proc reportError*(lex: var Lexer, c: char) =
