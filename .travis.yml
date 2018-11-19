@@ -62,7 +62,9 @@ script:
   - cp bin/* glm-$BUILD-amd64
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then cp pcre64.dll glm-$BUILD-amd64; fi
   - nimble library$BUILD -y -d:release --passc:"-flto" $CROSS
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip lib/_glm.pyd; else strip lib/_glm.so; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then strip lib/_glm.pyd; fi
+  - if [ $BUILD == osx ]; then strip -x lib/_glm.so; fi
+  - if [ $BUILD == linux ]; then strip lib/_glm.so; fi
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then cp lib/_glm.pyd glm-$BUILD-amd64; else cp lib/_glm.so glm-$BUILD-amd64; fi
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 $GITHUB_RELEASE_FILENAME glm-$BUILD-amd64; else tar cfJ $GITHUB_RELEASE_FILENAME glm-$BUILD-amd64; fi
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then python setup.py bdist_wheel --plat-name=win_amd64; fi
