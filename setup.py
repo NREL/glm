@@ -51,11 +51,11 @@ elif platform == "linux" or platform == "linux2":
 def setup_package():
     if not os.path.exists("./glm"):
         os.makedirs("./glm")
-    shutil.copy("./lib/glm.{}".format(ext), "./glm/")
+    shutil.copy("./lib/_glm.{}".format(ext), "./glm/")
     with open("./glm/__init__.py", "w") as f:
-        f.write("""from .glm import *""".strip())
+        f.write("""from ._glm import *""".strip())
     with open("./MANIFEST.in", "w") as f:
-        f.write("recursive-include ./glm/ glm.*")
+        f.write("recursive-include ./glm/ _glm.*")
 
 
 setup_package()
