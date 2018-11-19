@@ -5,6 +5,8 @@ from logging as logger import nil
 import json
 import nimpy
 
+pyExportModuleName("_glm")
+
 import ./parser
 import ./ast
 
