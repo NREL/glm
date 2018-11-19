@@ -64,8 +64,8 @@ script:
   - nimble library$BUILD -y -d:release --passc:"-flto" $CROSS
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then cp lib/glm.pyd glm-$BUILD-amd64; else cp lib/glm.so glm-$BUILD-amd64; fi
   - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then zip -r9 $GITHUB_RELEASE_FILENAME glm-$BUILD-amd64; else tar cfJ $GITHUB_RELEASE_FILENAME glm-$BUILD-amd64; fi
-  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then python setup.py bdist_wheel --plat-name=win_x86_64; fi
-  - if [ $BUILD == osx ]; then python setup.py bdist_wheel; fi
+  - if [ $TRAVIS_OS_NAME == linux -a $BUILD == windows ]; then python setup.py bdist_wheel --plat-name=win_amd64; fi
+  - if [ $BUILD == osx ]; then python setup.py bdist_wheel --plat-name=macosx_10_7_x86_64; fi
   - if [ $BUILD == linux ]; then python setup.py bdist_wheel --plat-name=manylinux1_x86_64; fi
   - ls -al ./dist
 
@@ -74,9 +74,12 @@ after_success:
   - tar -xvf github-release-$TRAVIS_OS_NAME-amd64.tar.xz
   - cp ./github-release-$TRAVIS_OS_NAME-amd64/github-release .
   - chmod a+x github-release
+  - export TRAVIS_TAG_VERSION=${TRAVIS_TAG#"v"}
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release create --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG"; fi
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "$GITHUB_RELEASE_FILENAME"; fi
-  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-*.whl"; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == linux ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-manylinux1_x86_64.whl"; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == windows ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-win_amd64.whl"; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == osx ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-macosx_10_7_x86_64.whl"; fi
 
 notifications:
   email: false
