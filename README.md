@@ -4,6 +4,8 @@ A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format p
 
 ![](./docs/img/python-example.png)
 
+![](./docs/img/error-example.png)
+
 ## Install
 
 Go to the [latest releases page](https://github.com/NREL/glm/releases/latest) for the Python or the CLI for various operating systems.
