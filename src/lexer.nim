@@ -74,7 +74,10 @@ proc reportError*(t: Token, source: string, hint: string = "") =
 
     glm_echo "Hint: ", fgGreen, newline=false
 
-    echo " The following line may be the source of the error: "
+    echo " The following may be the source of the error: "
+
+    if line_index - 2 >= 0:
+        glm_echo source.splitLines()[line_index - 2], fgWhite
 
     glm_echo source_text, fgWhite, {styleBright}
 
@@ -82,6 +85,9 @@ proc reportError*(t: Token, source: string, hint: string = "") =
         glm_echo "^".repeat( end_index - start_index ).align( (ntabs * 7) + end_index + 1 ), fgWhite, {styleBright}
     else:
         glm_echo "^".align( (ntabs * 7) + start_index + 1), fgWhite, {styleBright}
+
+    if line_index - 1 <= source.splitLines().len:
+        glm_echo source.splitLines()[line_index], fgWhite
 
     echo "If you think this is not desired behaviour, please contact the developers at https://github.com/NREL/glm"
 
