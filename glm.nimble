@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = staticExec("""git describe --tags HEAD""")[1..5]
 author        = "Dheepak Krishnamurthy"
 description   = "GLM package"
 license       = "MIT"
