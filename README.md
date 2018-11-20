@@ -1,10 +1,19 @@
 # glm [![Build Status](https://travis-ci.com/NREL/glm.svg?branch=master)](https://travis-ci.com/NREL/glm)
 
-A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format parser.
+A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON (and back) parser.
+
+- Fast GLM to JSON converter.
+    - Supports nested objects, schedules, definitions, directives, modules, includes and clock objects
+- Fast JSON to GLM converter.
+- Native support for Python, returns nested dictionaries.
 
 ![](./docs/img/python-example.png)
 
+- Descriptive error messages when unable to parse a GridLAB-D model file.
+
 ![](./docs/img/error-example.png)
+
+- Tested on all examples in the GridLAB-D source repository.
 
 ## Install
 
