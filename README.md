@@ -6,6 +6,43 @@ A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON file format p
 
 ## Install
 
+Go to the [latest releases page](https://github.com/NREL/glm/releases/latest) for the Python or the CLI for various operating systems.
+
+You can pip install the wheel (files with extension .whl) after downloading it or directly from the URL from the releases page.
+
+Alternatively, if you want to use the CLI, you can unzip the file from the releases page for your operating system.
+There will be two executables in the folder, `glm2json` and `json2glm`.
+On Windows, you may have to rename the files to add the `.exe` at the end of the executable in order to run it from a Windows CMD prompt.
+You will be able to run it from a Git Bash prompt without renaming it.
+
+You may use the following commands to download and install it.
+The following commands get the latest tagged version.
+
+### Python
+
+**Windows**
+
+```
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+pip install https://github.com/NREL/glm/releases/download/VERSION/glm-${VERSION#"v"}-py2.py3-none-win_amd64.whl
+```
+
+**OSX**
+
+```
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+pip install https://github.com/NREL/glm/releases/download/VERSION/glm-${VERSION#"v"}-py2.py3-none-macosx_10_7_x86_64.whl
+```
+
+**Linux**
+
+```
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+pip install https://github.com/NREL/glm/releases/download/VERSION/glm-${VERSION#"v"}-py2.py3-none-manylinux1_x86_64.whl
+```
+
+### CLI
+
 **Windows**
 
 ```
@@ -34,7 +71,7 @@ The contents of the compressed archive will contain a command line executable, a
 
 ## Documentation
 
-You can use this
+You can use this from the command line as follows:
 
 ```
 Usage:
@@ -188,6 +225,10 @@ Convert from glm/json to json/glm
   "schedules": []
 }
 ```
+
+## Issues
+
+Feel free to open an issue if something is not working as expected.
 
 
 
