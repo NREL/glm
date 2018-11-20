@@ -1,5 +1,7 @@
 # Package
 
+echo staticExec("""git describe --tags HEAD""")
+
 version       = staticExec("""git describe --tags HEAD""")[1..5]
 author        = "Dheepak Krishnamurthy"
 description   = "GLM package"
