@@ -1,8 +1,21 @@
 # Package
 
-echo staticExec("""git describe --tags HEAD""")
+import ospaths, strutils
 
-version       = staticExec("""git describe --tags HEAD""")[1..5]
+template thisModuleFile: string = instantiationInfo(fullPaths = true).filename
+
+proc getGitVersion*(): string {.compileTime.} =
+    const v = staticExec("git describe --tags HEAD")[1..5]
+    if v == "atal:":
+        const version = thisModuleFile.split(DirSep)[^2].split("-")[^1]
+        if version.split(".").len != 3:
+            return "0.1.0"
+        else:
+            return version
+    else:
+        return v
+
+version       = getGitVersion()
 author        = "Dheepak Krishnamurthy"
 description   = "GLM package"
 license       = "MIT"
