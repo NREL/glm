@@ -21,15 +21,21 @@ Go to the [latest releases page](https://github.com/NREL/glm/releases/latest) fo
 
 You can pip install the wheel (files with extension .whl) after downloading it or directly from the URL from the releases page.
 
+For example, the following installs the glm package v0.2.5 for Windows. This will work for Python2 or Python3.
+
+```
+pip install https://github.com/NREL/glm/releases/download/VERSION/glm-0.2.5-py2.py3-none-win_amd64.whl
+```
+
 Alternatively, if you want to use the CLI, you can unzip the file from the releases page for your operating system.
 There will be two executables in the folder, `glm2json` and `json2glm`.
 On Windows, you may have to rename the files to add the `.exe` at the end of the executable in order to run it from a Windows CMD prompt.
 You will be able to run it from a Git Bash prompt without renaming it.
 
-You may use the following commands to download and install it.
-The following commands get the latest tagged version.
-
 ### Python
+
+You may use the following commands to download and install the glm package using pip.
+The following commands will always get the latest tagged version.
 
 **Windows**
 
