@@ -47,19 +47,6 @@ elif platform == "darwin":
 elif platform == "linux" or platform == "linux2":
     ext = "so"
 
-
-def setup_package():
-    if not os.path.exists("./glm"):
-        os.makedirs("./glm")
-    shutil.copy("./lib/_glm.{}".format(ext), "./glm/")
-    with open("./glm/__init__.py", "w") as f:
-        f.write("""from ._glm import *""".strip())
-    with open("./MANIFEST.in", "w") as f:
-        f.write("recursive-include ./glm/ _glm.*")
-
-
-setup_package()
-
 setup(
     name="glm",
     version=version,
