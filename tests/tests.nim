@@ -52,6 +52,23 @@ when isMainModule:
                 var p = initParser("""
 			    clock {
 	 			    timestamp '2000-01-01 0:00:00';
+	 			    timezone EST+5EDT
+				    }
+
+                """)
+                p.walk()
+                discard p.ast.toJson()
+                check(false)
+            except Exception as e:
+                check(true)
+
+    suite "test warning":
+
+        test "exceptions":
+            try:
+                var p = initParser("""
+			    clock {
+	 			    timestamp '2000-01-01 0:00:00';
 	 			    timezone EST+5EDT;
 				    };
 
@@ -59,8 +76,9 @@ when isMainModule:
                 """)
                 p.walk()
                 discard p.ast.toJson()
-            except Exception as e:
                 check(true)
+            except Exception as e:
+                check(false)
 
     suite "test IEEE-13 glm":
 

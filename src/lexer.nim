@@ -58,6 +58,37 @@ template glm_echo*(s: string; fg: ForegroundColor; styleSet: set[Style] = {}; ne
   if newline:
     echo ""
 
+proc reportWarning*(t: Token, source: string, hint: string = "") =
+    let line_index= t.line_index
+
+    var source_text = source.splitLines()[line_index - 1]
+
+    var start_index = t.start_index
+    let end_index = t.end_index
+    var ntabs = source_text[0..<start_index].count('\t')
+
+
+    glm_echo "ParserWarning: ", fgYellow, newline=false
+    glm_echo &"[line: {line_index}, column: {start_index}]", fgWhite, {styleBright}, newline=false
+    echo &" {hint}"
+
+    glm_echo "Hint: ", fgGreen, newline=false
+
+    echo " The following may be the source of the warning: "
+
+    if line_index - 2 >= 0:
+        glm_echo source.splitLines()[line_index - 2], fgWhite
+
+    glm_echo source_text, fgWhite, {styleBright}
+
+    if start_index != end_index:
+        glm_echo "^".repeat( end_index - start_index ).align( (ntabs * 7) + end_index + 1 ), fgRed, {styleBright}
+    else:
+        glm_echo "^".align( (ntabs * 7) + start_index + 1), fgRed, {styleBright}
+
+    if line_index - 1 <= source.splitLines().len:
+        glm_echo source.splitLines()[line_index], fgWhite
+
 proc reportError*(t: Token, source: string, hint: string = "") =
     let line_index= t.line_index
 

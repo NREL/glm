@@ -85,6 +85,21 @@ proc parse_rvalue(p: var Parser): string =
 
     return join(rvalue).strip(chars={'\'', '"', ' '})
 
+proc parse_rvalue_with_optional_semicolon(p: var Parser): string =
+    var rvalue : seq[string]
+
+    while p.peek().kind != tk_semicolon:
+        if p.peek().kind == tk_newline or p.peek().kind == tk_eof:
+            let hint = &"Warning: Expected semicolon"
+            reportWarning(p.peek(), p.lexer.source, hint)
+            break
+        rvalue.add( p.advance().lexeme )
+
+    p.advance()
+
+    return join(rvalue).strip(chars={'\'', '"', ' '})
+
+
 proc parse_clock(p: var Parser): Clock =
     assert p.previous().kind == tk_clock
     p.ignore(tk_space)
@@ -275,7 +290,7 @@ proc parse_directive(p: var Parser): Directive =
     var name = p.advance().lexeme
     if p.peek().kind == tk_equal:
         p.advance(tk_newline, tk_space)
-        var rvalue = p.parse_rvalue()
+        var rvalue = p.parse_rvalue_with_optional_semicolon()
         let d = Directive(name: name, value: rvalue)
         return d
     else:
@@ -290,7 +305,7 @@ proc parse_definition(p: var Parser): Definition =
     var name = p.advance().lexeme
     if p.peek().kind == tk_equal:
         p.advance(tk_newline, tk_space)
-        var rvalue = p.parse_rvalue()
+        var rvalue = p.parse_rvalue_with_optional_semicolon()
         let d = Definition(name: name, value: rvalue)
         return d
     else:
