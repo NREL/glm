@@ -90,7 +90,7 @@ proc parse_rvalue_with_optional_semicolon(p: var Parser): string =
 
     while p.peek().kind != tk_semicolon:
         if p.peek().kind == tk_newline or p.peek().kind == tk_eof:
-            let hint = &"Warning: Expected semicolon"
+            let hint = &"Warning: Expected semicolon but found none."
             reportWarning(p.peek(), p.lexer.source, hint)
             break
         rvalue.add( p.advance().lexeme )
