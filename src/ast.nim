@@ -115,7 +115,12 @@ proc toSchedule*(jn: JsonNode): Schedule =
     result.name = $(jn["name"])
     for v in jn["values"]:
         result.values.add($(jn["values"]))
-    # TODO: add subschedule support
+    for child in jn["children"]:
+        var values: seq[string] = @[]
+        for v in child:
+            values.add($(v))
+        var s = SubSchedule(values: values)
+        result.children.add(s)
     return result
 
 proc toAst*(jn: JsonNode): AST =
@@ -171,6 +176,11 @@ proc toGlm*(ast: AST): string =
         result = result & "schedule " & schedule.name.strip(chars={'"'}) & " {\n"
         for val in schedule.values:
             result = result & "\t" & val & ";\n"
+        for child in schedule.children:
+            result = result & "\t" & "{\n"
+            for v in child.values:
+                result = result & "\t\t" & v & ";\n"
+            result = result & "\t" & "}\n"
         result = result & "};"
         result = result & "\n\n"
 
