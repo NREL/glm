@@ -248,4 +248,9 @@ Convert from glm/json to json/glm
 Feel free to open an issue if something is not working as expected.
 
 
+## Developer Guide
+
+- Install [Nim](https://nim-lang.org/install.html)
+- Run `nimble install -y` to generate binaries
+
 
