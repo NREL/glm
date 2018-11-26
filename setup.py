@@ -53,7 +53,11 @@ def setup_package():
         os.makedirs("./glm")
     shutil.copy("./lib/_glm.{}".format(ext), "./glm/")
     with open("./glm/__init__.py", "w") as f:
-        f.write("""from ._glm import *""".strip())
+        f.write(
+            """from ._glm import *
+__version__ = version()
+""".strip()
+        )
     with open("./MANIFEST.in", "w") as f:
         f.write("recursive-include ./glm/ _glm.*")
 

@@ -28,4 +28,7 @@ proc dump(data: PyObject, file: string): int {. exportpy .} =
     let glm = jsdata.toAst().toGlm()
     writeFile(file, glm)
 
+proc version(): string {. exportpy .} =
+    const versionString = staticExec("git describe --tags HEAD")
+    return versionString
 
