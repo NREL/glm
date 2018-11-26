@@ -35,6 +35,16 @@ when isMainModule:
                 l1 == readFile("./tests/data/4node.json").parseJson()
                 l2 == readFile("./tests/data/powerflow_IEEE_4node.json").parseJson()
 
+    suite "test schedules":
+
+        setup:
+            var
+                l1 = parse("./tests/data/appliance_schedules.glm").toJson()
+
+        test "parser":
+            check:
+                l1 == readFile("./tests/data/appliance_schedules.json").parseJson()
+
     suite "test error":
 
         test "exceptions":

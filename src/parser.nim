@@ -210,6 +210,21 @@ proc parse_object(p: var Parser): Object=
         reportError(t, p.lexer.source, hint)
         raise newException(ParserError, hint)
 
+proc parse_sub_schedule(p: var Parser): SubSchedule =
+    assert p.previous().kind == tk_left_brace
+
+    var schedules: seq[string] = @[]
+
+    while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+        let rvalue = p.parse_rvalue()
+        schedules.add(rvalue)
+
+    p.ignore(tk_semicolon)
+
+    let s = SubSchedule(values: schedules)
+
+    return s
+
 proc parse_schedule(p: var Parser): Schedule =
     assert p.previous().kind == tk_schedule
 
@@ -221,16 +236,22 @@ proc parse_schedule(p: var Parser): Schedule =
     if t.kind == tk_left_brace:
 
         var schedules: seq[string] = @[]
+        var children: seq[SubSchedule] = @[]
 
         # TODO: nested schedule blocks
         while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+
+            if p.previous().kind == tk_left_brace:
+                var child = p.parse_sub_schedule()
+                children.add(child)
+                continue
 
             let rvalue = p.parse_rvalue()
             schedules.add(rvalue)
 
         p.ignore(tk_semicolon)
 
-        let s = Schedule(name: schedule_name, values: schedules)
+        let s = Schedule(name: schedule_name, values: schedules, children: children)
 
         return s
     else:

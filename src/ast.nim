@@ -26,9 +26,12 @@ type
     Definition* = ref object of GLD
         name*: string
         value*: string
+    SubSchedule* = ref object of GLD
+        values*: seq[string]
     Schedule* = ref object of GLD
         name*: string
         values*: seq[string]
+        children*: seq[SubSchedule]
 
     AST* = ref object
         clock*: Clock
@@ -112,6 +115,7 @@ proc toSchedule*(jn: JsonNode): Schedule =
     result.name = $(jn["name"])
     for v in jn["values"]:
         result.values.add($(jn["values"]))
+    # TODO: add subschedule support
     return result
 
 proc toAst*(jn: JsonNode): AST =
@@ -233,6 +237,13 @@ proc toJson(d: Schedule): JsonNode =
     for v in d.values:
         values.add(newJString(v))
     gldJObject.add("values", values)
+    var children = newJArray()
+    for child in d.children:
+        var values = newJArray()
+        for v in child.values:
+            values.add(newJString(v))
+        children.add(values)
+    gldJObject.add("children", children)
     return gldJObject
 
 proc toJson*(ast: AST): JsonNode =
