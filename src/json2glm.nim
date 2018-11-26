@@ -19,7 +19,8 @@ proc json2glm*(pathToFile: string): int =
     except Exception as e:
         glm_echo "Hint: ", fgGreen, newline=false
         echo "Could not convert the JSON file to a GLM file. Check the JSON format or contact the developers at https://github.com/NREL/glm"
-        raise e
+        echo getCurrentExceptionMsg()
+        return 1
 
 
 when isMainModule and appType != "lib":

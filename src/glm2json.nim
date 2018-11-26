@@ -28,7 +28,7 @@ proc glm2json*(pathToFile: string, pretty = false): int =
             stdout.write ast.toJson(), "\n"
         return 0
     except:
-        return -1
+        return 1
 
 
 when isMainModule and appType != "lib":
