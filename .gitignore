@@ -16,3 +16,6 @@ nimcache/
 
 *.DS_Store
 
+dist/
+.mypy_cache/
+
