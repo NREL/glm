@@ -16,7 +16,7 @@ try:
 except ImportError:
     convert_text = lambda string, *args, **kwargs: string
 
-with open("README.md", encoding="utf-8") as readme_file:
+with open("README.md") as readme_file:
     long_description = convert_text(readme_file.read(), "rst", format="md")
 
 
