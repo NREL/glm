@@ -86,4 +86,15 @@ setup(
     include_package_data=True,
     distclass=BinaryDistribution,
     package_data={"glm": ["*{}".format(ext)]},
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering",
+    ],
 )
