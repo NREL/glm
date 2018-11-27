@@ -23,7 +23,8 @@ Go to the [latest releases page](https://github.com/NREL/glm/releases/latest) fo
 
 You can pip install the package from PyPI or using the wheel (files with extension .whl) after downloading it or directly from the URL from the releases page.
 
-For example, the following installs the latest glm package for Windows, MacOSX or Linux. This will work for Python2 or Python3.
+The following installs the latest glm package for Windows, MacOSX or Linux from PyPI.
+This will work for Python2 or Python3.
 
 ```
 pip install glm
@@ -31,7 +32,7 @@ pip install glm
 
 ### CLI
 
-Alternatively, if you want to use the CLI, you can unzip the file from the releases page for your operating system.
+If you want to use the CLI, you can unzip the file from the releases page for your operating system.
 There will be two executables in the folder, `glm2json` and `json2glm`.
 On Windows, you may have to rename the files to add the `.exe` at the end of the executable in order to run it from a Windows CMD prompt.
 You will be able to run it from a Git Bash prompt without renaming it.
