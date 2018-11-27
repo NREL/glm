@@ -4,11 +4,11 @@ import subprocess
 import shlex
 import os
 import shutil
-
 from sys import platform
 
 from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
+import setuptools.command.install
 from setuptools.dist import Distribution
 
 try:
@@ -38,6 +38,23 @@ class bdist_wheel(_bdist_wheel):
         # We don't contain any python source
         python, abi = "py2.py3", "none"
         return python, abi, plat
+
+
+class PostInstallCommand(setuptools.command.install.install, object):
+
+    def run(self):
+
+        super(PostInstallCommand, self).run()
+        source_dir = os.path.dirname(os.path.abspath(__file__))
+        build_dir = os.path.join(source_dir, "bin")
+
+        for executable_name in ["glm2json", "json2glm"]:
+            source = os.path.join(build_dir, executable_name)
+            target = os.path.join(self.install_scripts, executable_name)
+            if os.path.isfile(target):
+                os.remove(target)
+
+            self.move_file(source, target)
 
 
 version = (
@@ -82,7 +99,7 @@ setup(
     author_email="me@kdheepak.com",
     url="https://github.com/NREL/glm",
     zip_safe=False,
-    cmdclass={"bdist_wheel": bdist_wheel},
+    cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel},
     include_package_data=True,
     distclass=BinaryDistribution,
     package_data={"glm": ["*{}".format(ext)]},
