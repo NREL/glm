@@ -1,4 +1,4 @@
-# glm [![Build Status](https://travis-ci.com/NREL/glm.svg?branch=master)](https://travis-ci.com/NREL/glm)
+# glm [![PyPI](https://img.shields.io/pypi/v/glm.svg)](https://pypi.python.org/pypi/glm) [![Python version compatibility status](https://img.shields.io/pypi/pyversions/glm.svg)](https://pypi.python.org/pypi/glm) [![Build Status](https://travis-ci.com/NREL/glm.svg?branch=master)](https://travis-ci.com/NREL/glm)
 
 A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON (and back) parser.
 
