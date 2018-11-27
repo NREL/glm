@@ -11,6 +11,14 @@ from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
 from setuptools.dist import Distribution
 
+try:
+    from pypandoc import convert_text
+except ImportError:
+    convert_text = lambda string, *args, **kwargs: string
+
+with open("README.md", encoding="utf-8") as readme_file:
+    long_description = convert_text(readme_file.read(), "rst", format="md")
+
 
 class BinaryDistribution(Distribution):
 
@@ -68,6 +76,7 @@ setup(
     name="glm",
     version=version,
     description="glm Python library",
+    long_description=long_description,
     packages=["glm"],
     author="Dheepak Krishnamurthy",
     author_email="me@kdheepak.com",
