@@ -19,46 +19,23 @@ A fast [GridLAB-D](https://github.com/gridlab-d/gridlab-d) to JSON (and back) pa
 
 Go to the [latest releases page](https://github.com/NREL/glm/releases/latest) for the Python or the CLI for various operating systems.
 
-You can pip install the wheel (files with extension .whl) after downloading it or directly from the URL from the releases page.
+### Python
 
-For example, the following installs the glm package v0.2.5 for Windows. This will work for Python2 or Python3.
+You can pip install the package from PyPI or using the wheel (files with extension .whl) after downloading it or directly from the URL from the releases page.
+
+For example, the following installs the latest glm package for Windows, MacOSX or Linux. This will work for Python2 or Python3.
 
 ```
-pip install https://github.com/NREL/glm/releases/download/v0.2.5/glm-0.2.5-py2.py3-none-win_amd64.whl
+pip install glm
 ```
+
+### CLI
 
 Alternatively, if you want to use the CLI, you can unzip the file from the releases page for your operating system.
 There will be two executables in the folder, `glm2json` and `json2glm`.
 On Windows, you may have to rename the files to add the `.exe` at the end of the executable in order to run it from a Windows CMD prompt.
 You will be able to run it from a Git Bash prompt without renaming it.
-
-### Python
-
-You may use the following commands to download and install the glm package using pip.
-The following commands will always get the latest tagged version.
-
-**Windows**
-
-```
-export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-win_amd64.whl
-```
-
-**OSX**
-
-```
-export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-macosx_10_7_x86_64.whl
-```
-
-**Linux**
-
-```
-export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-manylinux1_x86_64.whl
-```
-
-### CLI
+You can use the following commands to download and unzip the files on the respective operating systems.
 
 **Windows**
 
@@ -253,4 +230,27 @@ Feel free to open an issue if something is not working as expected.
 - Install [Nim](https://nim-lang.org/install.html)
 - Run `nimble install -y` to generate binaries
 
+If you want to install the latest version from GitHub, you can use the following commands.
+The GitHub release is identical to that on PyPI.
+
+**Windows**
+
+```
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-win_amd64.whl
+```
+
+**OSX**
+
+```
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-macosx_10_7_x86_64.whl
+```
+
+**Linux**
+
+```
+export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
+pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-manylinux1_x86_64.whl
+```
 
