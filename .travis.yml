@@ -91,7 +91,9 @@ after_success:
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == windows ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-win_amd64.whl"; fi
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == osx ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-macosx_10_7_x86_64.whl"; fi
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then python -m pip install --user twine; fi
-  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then python -m twine upload dist/*; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == linux ]; then python -m twine upload "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-manylinux1_x86_64.whl"; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == windows ]; then python -m twine upload "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-win_amd64.whl"; fi
+  - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == osx ]; then python -m twine upload "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-macosx_10_7_x86_64.whl"; fi
 
 notifications:
   email: false
