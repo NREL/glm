@@ -50,7 +50,13 @@ class PostInstallCommand(setuptools.command.install.install, object):
 
         for executable_name in ["glm2json", "json2glm"]:
             source = os.path.join(build_dir, executable_name)
-            target = os.path.join(self.install_scripts, executable_name)
+            try:
+                os.mkdir(os.path.join(self.install_scripts))
+            except Exception as e:
+                pass
+            target = os.path.abspath(
+                os.path.join(self.install_scripts, executable_name)
+            )
             if os.path.isfile(target):
                 os.remove(target)
 
