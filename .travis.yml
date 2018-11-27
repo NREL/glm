@@ -3,6 +3,14 @@ sudo: false
 
 language: c
 
+
+env:
+  global:
+    #- TWINE_REPOSITORY_URL=https://test.pypi.org/legacy/
+    - TWINE_USERNAME=kdheepak89
+    # TWINE_PASSWORD is set in Travis settings
+
+
 matrix:
   fast_finish: true
   include:
@@ -83,6 +91,8 @@ after_success:
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == linux ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-manylinux1_x86_64.whl"; fi
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == windows ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-win_amd64.whl"; fi
   - if [ ! -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $BUILD == osx ]; then ./github-release upload --token "$GITHUB_TOKEN" --owner NREL --repo glm --tag "$TRAVIS_TAG" --file "./dist/glm-${TRAVIS_TAG_VERSION}-py2.py3-none-macosx_10_7_x86_64.whl"; fi
+  - python -m pip install twine
+  - python -m twine upload dist/*
 
 notifications:
   email: false
