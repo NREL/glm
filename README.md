@@ -30,6 +30,8 @@ This will work for Python2 or Python3.
 pip install glm
 ```
 
+This also installs the `glm2json` and `json2glm` cli utilities.
+
 ### CLI
 
 If you want to use the CLI, you can unzip the file from the releases page for your operating system.
