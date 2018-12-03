@@ -4,7 +4,9 @@ from utils import nil
 from logging as logger import nil
 import json
 import nimpy
+import terminal
 
+import ./lexer
 import ./parser
 import ./ast
 
@@ -27,7 +29,10 @@ proc glm2json*(pathToFile: string, pretty = false): int =
         else:
             stdout.write ast.toJson(), "\n"
         return 0
-    except:
+    except Exception as e:
+        glm_echo "Error: ", fgRed, newline=false
+        echo "Could not convert the GLM file to a JSON file. Check the GLM format or contact the developers at https://github.com/NREL/glm"
+        echo getCurrentExceptionMsg()
         return 1
 
 

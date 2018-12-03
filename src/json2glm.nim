@@ -17,7 +17,7 @@ proc json2glm*(pathToFile: string): int =
         stdout.write jn.toAst().toGlm()
         return 0
     except Exception as e:
-        glm_echo "Hint: ", fgGreen, newline=false
+        glm_echo "Error: ", fgRed, newline=false
         echo "Could not convert the JSON file to a GLM file. Check the JSON format or contact the developers at https://github.com/NREL/glm"
         echo getCurrentExceptionMsg()
         return 1

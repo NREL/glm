@@ -35,6 +35,12 @@ when isMainModule:
                 l1 == readFile("./tests/data/4node.json").parseJson()
                 l2 == readFile("./tests/data/powerflow_IEEE_4node.json").parseJson()
 
+    suite "test nested":
+
+        test "parser":
+            check:
+                len(parse("./tests/data/configuration.glm").toJson()) == 7
+
     suite "test schedules":
 
         setup:

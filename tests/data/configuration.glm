@@ -1,0 +1,18 @@
+object triplex_line_configuration {
+      name commercial_line_config;
+      conductor_1 object triplex_line_conductor {
+            resistance 0.48;
+            geometric_mean_radius 0.0158;
+            };
+      conductor_2 object triplex_line_conductor {
+            resistance 0.48;
+            geometric_mean_radius 0.0158;
+            };
+      conductor_N object triplex_line_conductor {
+            resistance 0.48;
+            geometric_mean_radius 0.0158;
+            };
+      insulation_thickness 0.08;
+      diameter 0.522;
+}
+

@@ -6,6 +6,8 @@ import lexer
 import tokens
 import ast
 
+import uuids
+
 type
     Parser* = ref object
         lexer*: Lexer
@@ -213,9 +215,16 @@ proc parse_object(p: var Parser): Object=
             var t = p.previous()
             assert p.match(tk_space)
             let lvalue = t.lexeme
-            let rvalue = p.parse_rvalue()
-
-            o.add(lvalue, newJString(rvalue))
+            if p.peek().kind == tk_object:
+                p.advance()
+                var child = p.parse_object()
+                let name = $genUUID()
+                child.attributes["name"] = newJString(name)
+                p.ast.objects.add(child)
+                o.add(lvalue, newJString(name))
+            else:
+                let rvalue = p.parse_rvalue()
+                o.add(lvalue, newJString(rvalue))
 
         p.ignore(tk_semicolon)
 
