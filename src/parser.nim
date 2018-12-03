@@ -103,7 +103,7 @@ proc parse_rvalue_with_optional_semicolon(p: var Parser): string =
 
 
 proc parse_clock(p: var Parser): Clock =
-    assert p.previous().kind == tk_clock
+    doAssert p.previous().kind == tk_clock
     p.ignore(tk_space)
     p.expect(tk_left_brace)
 
@@ -112,7 +112,7 @@ proc parse_clock(p: var Parser): Clock =
     while p.advance(tk_newline, tk_space).kind != tk_right_brace:
 
         var t = p.previous()
-        assert p.match(tk_space)
+        doAssert p.match(tk_space)
         let lvalue = t.lexeme
         let rvalue = p.parse_rvalue()
 
@@ -124,7 +124,7 @@ proc parse_clock(p: var Parser): Clock =
     return c
 
 proc parse_module(p: var Parser): Module =
-    assert p.previous().kind == tk_module
+    doAssert p.previous().kind == tk_module
 
     let t_module = p.advance(tk_newline, tk_space)
     let module = t_module.lexeme
@@ -142,7 +142,7 @@ proc parse_module(p: var Parser): Module =
         while p.advance(tk_newline, tk_space).kind != tk_right_brace:
 
             var t = p.previous()
-            assert p.match(tk_space)
+            doAssert p.match(tk_space)
             let lvalue = t.lexeme
             let rvalue = p.parse_rvalue()
 
@@ -157,7 +157,7 @@ proc parse_module(p: var Parser): Module =
         raise newException(ParserError, hint)
 
 proc parse_class(p: var Parser): Class=
-    assert p.previous().kind == tk_class
+    doAssert p.previous().kind == tk_class
 
     let t_class= p.advance(tk_newline, tk_space)
     var class_name = t_class.lexeme
@@ -170,7 +170,7 @@ proc parse_class(p: var Parser): Class=
 
         while p.advance(tk_newline, tk_space).kind != tk_right_brace:
             var t = p.previous()
-            assert p.match(tk_space)
+            doAssert p.match(tk_space)
             let lvalue = t.lexeme
             let rvalue = p.parse_rvalue()
             o.add(lvalue, newJString(rvalue))
@@ -185,7 +185,7 @@ proc parse_class(p: var Parser): Class=
 
 
 proc parse_object(p: var Parser): Object=
-    assert p.previous().kind == tk_object
+    doAssert p.previous().kind == tk_object
 
     let t_object = p.advance(tk_newline, tk_space)
     var object_name = t_object.lexeme
@@ -213,7 +213,7 @@ proc parse_object(p: var Parser): Object=
                 continue
 
             var t = p.previous()
-            assert p.match(tk_space)
+            doAssert p.match(tk_space)
             let lvalue = t.lexeme
             if p.peek().kind == tk_object:
                 p.advance()
@@ -235,7 +235,7 @@ proc parse_object(p: var Parser): Object=
         raise newException(ParserError, hint)
 
 proc parse_sub_schedule(p: var Parser): SubSchedule =
-    assert p.previous().kind == tk_left_brace
+    doAssert p.previous().kind == tk_left_brace
 
     var schedules: seq[string] = @[]
 
@@ -250,7 +250,7 @@ proc parse_sub_schedule(p: var Parser): SubSchedule =
     return s
 
 proc parse_schedule(p: var Parser): Schedule =
-    assert p.previous().kind == tk_schedule
+    doAssert p.previous().kind == tk_schedule
 
     let t_schedule = p.advance(tk_newline, tk_space)
     var schedule_name = t_schedule.lexeme
@@ -284,7 +284,7 @@ proc parse_schedule(p: var Parser): Schedule =
         raise newException(ParserError, hint)
 
 proc parse_include(p: var Parser): Include =
-    assert p.previous().kind == tk_hash
+    doAssert p.previous().kind == tk_hash
     let t_include_type = p.advance(tk_newline, tk_space)
     p.expect(tk_space)
     p.advance(tk_newline, tk_space)
@@ -293,7 +293,7 @@ proc parse_include(p: var Parser): Include =
     return d
 
 proc parse_directive(p: var Parser): Directive =
-    assert p.previous().kind == tk_hash
+    doAssert p.previous().kind == tk_hash
     let t_directive_type = p.advance(tk_newline, tk_space)
     p.expect(tk_space)
     var name = p.advance().lexeme
@@ -308,7 +308,7 @@ proc parse_directive(p: var Parser): Directive =
         raise newException(ParserError, hint)
 
 proc parse_definition(p: var Parser): Definition =
-    assert p.previous().kind == tk_hash
+    doAssert p.previous().kind == tk_hash
     let t_definition_type = p.advance(tk_newline, tk_space)
     p.expect(tk_space)
     var name = p.advance().lexeme
