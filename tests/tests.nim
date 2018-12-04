@@ -56,10 +56,10 @@ when isMainModule:
         test "exceptions":
             try:
                 var p = initParser("""
-			    clock {
-	 			    timestamp '2000-01-01 0:00:00';
-	 			    timezone EST+5EDT
-				    }
+				clock {
+					timestamp '2000-01-01 0:00:00';
+					timezone EST+5EDT
+					}
 
                 """)
                 p.walk()
