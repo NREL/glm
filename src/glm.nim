@@ -4,6 +4,7 @@ from utils import nil
 from logging as logger import nil
 import json
 import nimpy
+import typetraits
 
 pyExportModuleName("_glm")
 
@@ -20,8 +21,8 @@ proc load(file: string): PyObject {. exportpy, noinline .} =
     return loads(data)
 
 proc dumps(data: PyObject): string {. exportpy, noinline .} =
-    let jsdata = pyImport("json").dumps( data ).toJson()
-    jsdata.toAst().toGlm()
+    let d = pyImport("json").dumps( data )
+    parseJson(d.to(string)).toAst().toGlm()
 
 proc dump(data: PyObject, file: string): int {. exportpy, noinline .} =
     let glm = dumps(data)
