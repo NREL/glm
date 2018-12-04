@@ -126,23 +126,28 @@ proc toSchedule*(jn: JsonNode): Schedule =
 proc toAst*(jn: JsonNode): AST =
     new result
 
-    result.clock = jn["clock"].toClock()
+    if jn.hasKey("clock"):
+        result.clock = jn["clock"].toClock()
 
-    for json_node in jn["objects"]:
-        result.objects.add json_node.toObject()
-    for json_node in jn["modules"]:
-        result.modules.add json_node.toModule()
-    for json_node in jn["definitions"]:
-        result.definitions.add json_node.toDefinition()
-    for json_node in jn["directives"]:
-        result.directives.add json_node.toDirective()
-    for json_node in jn["schedules"]:
-        result.schedules.add json_node.toSchedule()
+    if jn.hasKey("objects"):
+        for json_node in jn["objects"]:
+            result.objects.add json_node.toObject()
+    if jn.hasKey("modules"):
+        for json_node in jn["modules"]:
+            result.modules.add json_node.toModule()
+    if jn.hasKey("definitions"):
+        for json_node in jn["definitions"]:
+            result.definitions.add json_node.toDefinition()
+    if jn.hasKey("directives"):
+        for json_node in jn["directives"]:
+            result.directives.add json_node.toDirective()
+    if jn.hasKey("schedules"):
+        for json_node in jn["schedules"]:
+            result.schedules.add json_node.toSchedule()
 
     result
 
 proc toGlmAttributes(jn: JsonNode): string =
-
     for key, val in jn:
         result = result & "\t" & key.strip(chars={'"'}) & " "
         if " " in $(val):
@@ -151,11 +156,12 @@ proc toGlmAttributes(jn: JsonNode): string =
             result = result & ($val).strip(chars={'"'}) & ";\n"
 
 proc toGlm*(ast: AST): string =
-    result = result & "clock {\n"
-    result = result & toGlmAttributes(ast.clock.attributes)
-    result = result & "};"
+    if not ast.clock.isNil:
+        result = result & "clock {\n"
+        result = result & toGlmAttributes(ast.clock.attributes)
+        result = result & "};"
 
-    result = result & "\n\n"
+        result = result & "\n\n"
 
     for directive in ast.directives:
         result = result & "#set " & directive.name.strip(chars={'"'}) & "=" & directive.value.strip(chars={'"'}) & ";\n"
