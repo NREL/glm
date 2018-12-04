@@ -38,6 +38,6 @@ You can use the following block of code to find the version of glm that you are 
 
 ### Support Question
 
-<!--If it is a support question, describe it in detail in this section. Please provide the necessary OpenDSS files if possible or a minimal working example that we can use to discuss the quesiton. Delete the other sections.-->
+<!--If it is a support question, describe it in detail in this section. Please provide the necessary GLM files if possible or a minimal working example that we can use to discuss the quesiton. Delete the other sections.-->
 
 
