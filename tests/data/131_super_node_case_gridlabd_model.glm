@@ -1,0 +1,38 @@
+clock {
+	starttime "2016-08-01 11:51:00";
+	stoptime "2016-08-01 12:10:00";
+	timezone EST+5EDT;
+};
+
+#set relax_naming_rules=1;
+#set iteration_limit=9;
+
+
+
+
+
+module powerflow {
+	solver_method NR;
+};
+
+module tape {
+};
+
+
+
+object node:1 {
+	name node_1;
+	nominal_voltage 7621.0;
+	phases B;
+};
+
+object load:1001 {
+	name load_1;
+	nominal_voltage 7621.0;
+	phases B;
+	object player {
+		file load_1_B.csv;
+		property constant_power_B;
+	}
+};
+

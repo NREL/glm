@@ -15,5 +15,3 @@ when defined(crosswin):
   switch("gcc.options.linker", "")
   switch("os", "windows")
   switch("define", "windows")
-else:
-  echo "Not running windows"

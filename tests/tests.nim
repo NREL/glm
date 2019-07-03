@@ -110,6 +110,16 @@ when isMainModule:
             check:
                 l1.toAst().toGlm() == readFile("./tests/data/powerflow_IEEE_4node.glm")
 
+    suite "test powerflow nested":
+
+        setup:
+            var
+                l1 = parseJson(readFile("./tests/data/131_super_node_case_gridlabd_model.json"))
+
+        test "parser":
+            check:
+                l1.toAst().toGlm() == readFile("./tests/data/131_super_node_case_gridlabd_model.glm")
+
     suite "test taxonomy_feeder_R1-12.47-1":
 
         setup:
