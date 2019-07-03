@@ -21,13 +21,11 @@ with open("README.md") as readme_file:
 
 
 class BinaryDistribution(Distribution):
-
     def is_pure(self):
         return False
 
 
 class bdist_wheel(_bdist_wheel):
-
     def finalize_options(self):
         _bdist_wheel.finalize_options(self)
         # Mark us as not a pure python package
@@ -41,7 +39,6 @@ class bdist_wheel(_bdist_wheel):
 
 
 class PostInstallCommand(setuptools.command.install.install, object):
-
     def run(self):
 
         super(PostInstallCommand, self).run()
@@ -100,6 +97,7 @@ setup(
     version=version,
     description="glm Python library",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     packages=["glm"],
     author="Dheepak Krishnamurthy",
     author_email="me@kdheepak.com",
