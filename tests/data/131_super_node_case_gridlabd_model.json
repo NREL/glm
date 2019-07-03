@@ -1,0 +1,61 @@
+{
+  "clock": {
+    "starttime": "2016-08-01 11:51:00",
+    "stoptime": "2016-08-01 12:10:00",
+    "timezone": "EST+5EDT"
+  },
+  "definitions": [],
+  "directives": [
+    {
+      "name": "relax_naming_rules",
+      "value": "1"
+    },
+    {
+      "name": "iteration_limit",
+      "value": "9"
+    }
+  ],
+  "includes": [],
+  "modules": [
+    {
+      "attributes": {
+        "solver_method": "NR"
+      },
+      "name": "powerflow"
+    },
+    {
+      "attributes": {},
+      "name": "tape"
+    }
+  ],
+  "objects": [
+    {
+      "attributes": {
+        "name": "node_1",
+        "nominal_voltage": "7621.0",
+        "phases": "B"
+      },
+      "children": [],
+      "name": "node:1"
+    },
+    {
+      "attributes": {
+        "name": "load_1",
+        "nominal_voltage": "7621.0",
+        "phases": "B"
+      },
+      "children": [
+        {
+          "attributes": {
+            "file": "load_1_B.csv",
+            "property": "constant_power_B"
+          },
+          "children": [],
+          "name": "player"
+        }
+      ],
+      "name": "load:1001"
+    }
+  ],
+  "schedules": []
+}
