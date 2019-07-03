@@ -49,30 +49,30 @@ proc `$`*(ast: AST): string =
 proc `$`*(p: GLD): string =
     if p of Module:
         var p = cast[Module](p)
-        &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
+        &"<Module(name: \"{p.name}\", attr: {p.attributes.len})>"
     elif p of Object:
         var p = cast[Object](p)
-        &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
+        &"<Object(name: \"{p.name}\", attr: {p.attributes.len})>"
     elif p of Class:
         var p = cast[Class](p)
-        &"<{p.type}(name: \"{p.name}\", attr: {p.attributes.len})>"
+        &"<Class(name: \"{p.name}\", attr: {p.attributes.len})>"
     elif p of Clock:
         var p = cast[Clock](p)
-        &"<{p.type}(attr: {p.attributes.len})>"
+        &"<Clock(attr: {p.attributes.len})>"
     elif p of Directive:
         var p = cast[Directive](p)
-        &"<{p.type}(name: {p.name}, value: {p.value})>"
+        &"<Directive(name: {p.name}, value: {p.value})>"
     elif p of Definition:
         var p = cast[Definition](p)
-        &"<{p.type}(name: {p.name}, value: {p.value})>"
+        &"<Definition(name: {p.name}, value: {p.value})>"
     elif p of Include:
         var p = cast[Include](p)
-        &"<{p.type}(value: {p.value})>"
+        &"<Include(value: {p.value})>"
     elif p of Schedule:
         var p = cast[Schedule](p)
-        &"<{p.type}(name: {p.name})>"
+        &"<Schedule(name: {p.name})>"
     else:
-        &"<{p.type}()>"
+        &"<GLD()>"
 
 proc toObject*(jn: JsonNode): Object =
     new result
@@ -147,9 +147,9 @@ proc toAst*(jn: JsonNode): AST =
 
     result
 
-proc toGlmAttributes(jn: JsonNode): string =
+proc toGlmAttributes(jn: JsonNode, times = 1): string =
     for key, val in jn:
-        result = result & "\t" & key.strip(chars={'"'}) & " "
+        result = result & "\t".repeat(times) & key.strip(chars={'"'}) & " "
         if " " in $(val):
             result = result & ($val) & ";\n"
         else:
@@ -203,6 +203,10 @@ proc toGlm*(ast: AST): string =
     for obj in ast.objects:
         result = result & "object " & obj.name.strip(chars={'"'}) & " {\n"
         result = result & toGlmAttributes(obj.attributes)
+        for child in obj.children:
+            result = result & "\t" & & "object " & child.name.strip(chars={'"'}) & " {\n"
+            result = result & toGlmAttributes(child.attributes, 2)
+            result = result & "\t" & "}\n"
         result = result & "};"
         result = result & "\n\n"
 
