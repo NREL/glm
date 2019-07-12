@@ -31,8 +31,8 @@ proc glm2json*(pathToFile: string, pretty = false): int =
         return 0
     except Exception as e:
         glm_echo "Error: ", fgRed, newline=false
-        echo "Could not convert the GLM file to a JSON file. Check the GLM format or contact the developers at https://github.com/NREL/glm"
-        echo getCurrentExceptionMsg()
+        glm_echo "Could not convert the GLM file to a JSON file. Check the GLM format or contact the developers at https://github.com/NREL/glm"
+        glm_echo getCurrentExceptionMsg()
         return 1
 
 
