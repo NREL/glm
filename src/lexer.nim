@@ -50,13 +50,15 @@ proc `$`*(t: Token): string =
         discard
     fmt"<Token(""{lexeme}"", {t.kind})>"
 
+template glm_echo*(s: string) =
+  stderr.writeLine(s)
 
 template glm_echo*(s: string; fg: ForegroundColor; styleSet: set[Style] = {}; newline = true; brightFg = false) =
-  setForeGroundColor(fg, brightFg)
-  s.writeStyled(styleSet)
-  resetAttributes()
+  setForeGroundColor(stderr, fg, brightFg)
+  styledWriteLine(stderr, styleSet, s)
+  stderr.resetAttributes()
   if newline:
-    echo ""
+    glm_echo ""
 
 proc reportWarning*(t: Token, source: string, hint: string = "") =
     let line_index= t.line_index
@@ -70,11 +72,11 @@ proc reportWarning*(t: Token, source: string, hint: string = "") =
 
     glm_echo "ParserWarning: ", fgYellow, newline=false
     glm_echo &"[line: {line_index}, column: {start_index}]", fgWhite, {styleBright}, newline=false
-    echo &" {hint}"
+    glm_echo &" {hint}"
 
     glm_echo "Hint: ", fgGreen, newline=false
 
-    echo " The following may be the source of the warning: "
+    glm_echo " The following may be the source of the warning: "
 
     if line_index - 2 >= 0:
         glm_echo source.splitLines()[line_index - 2], fgWhite
@@ -101,11 +103,11 @@ proc reportError*(t: Token, source: string, hint: string = "") =
 
     glm_echo "ParserError: ", fgRed, newline=false
     glm_echo &"[line: {line_index}, column: {start_index}]", fgWhite, {styleBright}, newline=false
-    echo &" {hint}"
+    glm_echo &" {hint}"
 
     glm_echo "Hint: ", fgGreen, newline=false
 
-    echo " The following may be the source of the error: "
+    glm_echo " The following may be the source of the error: "
 
     if line_index - 2 >= 0:
         glm_echo source.splitLines()[line_index - 2], fgWhite
@@ -120,11 +122,11 @@ proc reportError*(t: Token, source: string, hint: string = "") =
     if line_index - 1 <= source.splitLines().len:
         glm_echo source.splitLines()[line_index], fgWhite
 
-    echo "If you think this is not desired behaviour, please contact the developers at https://github.com/NREL/glm"
+    glm_echo "If you think this is not desired behaviour, please contact the developers at https://github.com/NREL/glm"
 
 proc reportError*(lex: var Lexer, c: char) =
     # TODO: improve error reporting
-    echo &"Unknown symbol : {c}"
+    glm_echo &"Unknown symbol : {c}"
 
 proc previous(lex: Lexer, index = 1): char =
     if lex.current - index >= 0:
@@ -298,7 +300,7 @@ when isMainModule:
 
     var l = initLexer(readFile("./tests/data/4node.glm"))
     for t in l.scanTokens():
-        echo t
+        glm_echo t
         reportError(t, l.source)
         # if t.kind == tk_clock:
             # break
