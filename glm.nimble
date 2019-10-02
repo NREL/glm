@@ -25,7 +25,7 @@ bin           = @["glm2json", "json2glm"]
 
 # Dependencies
 
-requires "nim 0.20.0", "cligen 0.9.31", "uuids 0.1.10", "nimpy 0.1.0"
+requires "nim 1.0.0", "cligen 0.9.31", "uuids 0.1.10", "nimpy 0.1.0"
 
 task librarywindows, "build library":
    exec("""nim c -d:crosswin -d:release --passc:"-flto" --app:lib --out:lib/_glm.pyd src/glm.nim""")
