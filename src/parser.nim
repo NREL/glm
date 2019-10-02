@@ -253,7 +253,7 @@ proc parse_sub_schedule(p: var Parser): SubSchedule =
 
     while p.advance(tk_newline, tk_space).kind != tk_right_brace:
         p.recede(tk_space)
-        let rvalue = p.parse_rvalue()
+        let rvalue = p.parse_rvalue_with_optional_semicolon()
         # if rvalue.splitWhitespace().len != 6:
             # let hint = &"Expected schedule of length 6 but got {rvalue.splitWhitespace().len} instead"
             # reportWarning(p.peek(), p.lexer.source, hint)
@@ -287,7 +287,7 @@ proc parse_schedule(p: var Parser): Schedule =
                 continue
 
             p.recede(tk_space)
-            let rvalue = p.parse_rvalue()
+            let rvalue = p.parse_rvalue_with_optional_semicolon()
             # if rvalue.splitWhitespace().len != 6:
                 # let hint = &"Expected schedule of length 6 but got {rvalue.splitWhitespace().len} instead"
                 # reportWarning(p.peek(), p.lexer.source, hint)
