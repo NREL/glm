@@ -38,14 +38,26 @@ proc previous(p: Parser): Token = p.tokens[p.current - 1]
 
 proc peek(p: Parser): Token = p.tokens[p.current]
 
+proc isAtBegin(p: Parser): bool = p.current == 0
 proc isAtEnd(p: Parser): bool = p.peek().kind == tk_eof
 
+proc recede(p: var Parser, ignore: varargs[TokenKind]): Token {.discardable.} =
+    if not p.isAtBegin():
+        p.current -= 1
+        result = p.tokens[p.current]
+        if ignore.contains(result.kind):
+            result = p.recede(ignore)
+    else:
+        result = p.tokens[p.current]
+
 proc advance(p: var Parser, ignore: varargs[TokenKind]): Token {.discardable.} =
-    result = p.tokens[p.current]
     if not p.isAtEnd():
+        result = p.tokens[p.current]
         p.current += 1
-    if ignore.contains(result.kind):
-        result = p.advance(ignore)
+        if ignore.contains(result.kind):
+            result = p.advance(ignore)
+    else:
+        result = p.tokens[p.current]
 
 proc ignore(p: var Parser, kind: TokenKind): Token {.discardable.} =
     while p.peek().kind == kind:
@@ -240,7 +252,11 @@ proc parse_sub_schedule(p: var Parser): SubSchedule =
     var schedules: seq[string] = @[]
 
     while p.advance(tk_newline, tk_space).kind != tk_right_brace:
+        p.recede(tk_space)
         let rvalue = p.parse_rvalue()
+        # if rvalue.splitWhitespace().len != 6:
+            # let hint = &"Expected schedule of length 6 but got {rvalue.splitWhitespace().len} instead"
+            # reportWarning(p.peek(), p.lexer.source, hint)
         schedules.add(rvalue)
 
     p.ignore(tk_semicolon)
@@ -270,7 +286,12 @@ proc parse_schedule(p: var Parser): Schedule =
                 children.add(child)
                 continue
 
+            p.recede(tk_space)
             let rvalue = p.parse_rvalue()
+            # if rvalue.splitWhitespace().len != 6:
+                # let hint = &"Expected schedule of length 6 but got {rvalue.splitWhitespace().len} instead"
+                # reportWarning(p.peek(), p.lexer.source, hint)
+
             schedules.add(rvalue)
 
         p.ignore(tk_semicolon)
