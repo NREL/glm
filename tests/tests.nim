@@ -46,10 +46,12 @@ when isMainModule:
         setup:
             var
                 l1 = parse("./tests/data/appliance_schedules.glm").toJson()
+                l2 = parse("./tests/data/schedule1.glm").toJson()
 
         test "parser":
             check:
                 l1 == readFile("./tests/data/appliance_schedules.json").parseJson()
+                l2 == readFile("./tests/data/schedule1.json").parseJson()
 
     suite "test error":
 
@@ -129,10 +131,5 @@ when isMainModule:
         test "parser":
             check:
                 l1 == readFile("./tests/data/taxonomy_feeder_R1-12.47-1.json").parseJson()
-
-
-
-
-
 
 
