@@ -91,7 +91,7 @@ proc parse_rvalue(p: var Parser): string =
     while p.peek().kind != tk_semicolon:
         if p.peek().kind == tk_newline or p.peek().kind == tk_eof:
             let hint = &"Unable to parse {p.filename}. Unexpected newline character. Expected semicolon."
-            reportError(p.peek(), p.lexer.source, hint)
+            reportError(p.previous(), p.lexer.source, hint)
             raise newException(ParserError, hint)
         rvalue.add( p.advance().lexeme )
 
