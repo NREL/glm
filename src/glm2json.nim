@@ -10,20 +10,20 @@ import ./lexer
 import ./parser
 import ./ast
 
-proc parse*(file: string): AST =
+proc parse*(file: string, suppress_warning: bool = true): AST =
     var x = read_file(file)
-    var p = initParser(x)
+    var p = initParser(x, suppress_warning)
     p.filename = file
     p.walk()
     return p.ast
 
-proc glm2json*(pathToFile: string, pretty = false): int =
+proc glm2json*(pathToFile: string, pretty = false, warn = true): int =
     ## Convert from glm to json
 
     # logger.info("Running main procedure.")
     # logger.debug("Received path_to_file: " & path_to_file)
     try:
-        var ast = parse(path_to_file)
+        var ast = parse(path_to_file, warn)
         if pretty:
             stdout.write ast.toJson().pretty(), "\n"
         else:

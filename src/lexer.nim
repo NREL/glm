@@ -60,7 +60,9 @@ template glm_echo*(s: string; fg: ForegroundColor; styleSet: set[Style] = {}; ne
   if newline:
     glm_echo ""
 
-proc reportWarning*(t: Token, source: string, hint: string = "") =
+proc reportWarning*(t: Token, source: string, hint: string = "", suppress: bool = false) =
+    if suppress:
+        return
     let line_index= t.line_index
 
     var source_text = source.splitLines()[line_index - 1]
@@ -68,7 +70,6 @@ proc reportWarning*(t: Token, source: string, hint: string = "") =
     var start_index = t.start_index
     let end_index = t.end_index
     var ntabs = source_text[0..<start_index].count('\t')
-
 
     glm_echo "ParserWarning: ", fgYellow, newline=false
     glm_echo &"[line: {line_index}, column: {start_index}]", fgWhite, {styleBright}, newline=false

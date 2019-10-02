@@ -15,9 +15,10 @@ type
         tokens*: seq[Token]
         ast*: AST
         filename*: string
+        suppress_warning*: bool
     ParserError* = object of Exception
 
-proc initParser*(data: string): Parser =
+proc initParser*(data: string, suppress_warning: bool = true): Parser =
     var l = initLexer(data)
     discard l.scanTokens()
     var p = Parser(
@@ -27,7 +28,8 @@ proc initParser*(data: string): Parser =
         ast: AST(
             clock: nil,
         ),
-        filename: ""
+        filename: "",
+        suppress_warning: suppress_warning,
     )
     return p
 
@@ -105,7 +107,7 @@ proc parse_rvalue_with_optional_semicolon(p: var Parser): string =
     while p.peek().kind != tk_semicolon:
         if p.peek().kind == tk_newline or p.peek().kind == tk_eof:
             let hint = &"Warning: Expected semicolon but found none."
-            reportWarning(p.peek(), p.lexer.source, hint)
+            reportWarning(p.peek(), p.lexer.source, hint, p.suppress_warning)
             break
         rvalue.add( p.advance().lexeme )
 
