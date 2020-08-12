@@ -21,8 +21,8 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    - name: Install optional dependencies
-      run: nimble install nimcr -y
+    - name: Install dependencies
+      run: nimble build
     - name: Build files
       run: nimble release
     - name: Upload artifacts
