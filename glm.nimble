@@ -11,7 +11,7 @@ proc getGitVersion*(): string {.compileTime.} =
     if v == "atal:":
         const version = thisModuleFile.split(DirSep)[^2].split("-")[^1]
         if version.split(".").len != 3:
-            return "0.1.0"
+            return "0.4.1"
         else:
             return version
     else:
@@ -40,15 +40,6 @@ after build:
   mvFile binDir / cli, binDir / cli.replace("_cli", "")
 
 proc package(packageOs: string, packageCpu: string) =
-  let cli = packageName.replace("_cli", "")
-  let assets = &"{cli}-v{version}-{packageOs}-{packageCpu}"
-  let dist = "dist"
-  let distDir = dist / assets
-  rmDir distDir
-  mkDir distDir
-  cpDir binDir, distDir / binDir
-  cpFile "LICENSE", distDir / "LICENSE"
-  cpFile "README.md", distDir / "README.md"
   when buildOS == "windows":
     exec "python3 setup.py bdist_wheel --plat-name=win_amd64"
   elif buildOS == "macos":
@@ -58,9 +49,6 @@ proc package(packageOs: string, packageCpu: string) =
 
 task clean, "Clean project":
   rmDir(nimcacheDir())
-
-task changelog, "Create a changelog":
-  exec("./scripts/changelog.nim")
 
 task debug, "Clean and build debug":
   exec "nimble clean"
