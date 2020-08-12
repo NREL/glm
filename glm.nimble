@@ -37,8 +37,8 @@ task release, "Clean and build release":
 
 task package, "Make Python Package":
   when buildOS == "windows":
-    exec "python3 setup.py bdist_wheel --plat-name=win_amd64"
+    exec "python setup.py bdist_wheel --plat-name=win_amd64"
   elif buildOS == "macos":
-    exec "python3 setup.py bdist_wheel --plat-name=macosx_10_7_x86_64"
+    exec "python setup.py bdist_wheel --plat-name=macosx_10_7_x86_64"
   else:
-    exec "python3 setup.py bdist_wheel --plat-name=manylinux1_x86_64"
+    exec "python setup.py bdist_wheel --plat-name=manylinux1_x86_64"
