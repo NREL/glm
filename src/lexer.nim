@@ -60,6 +60,14 @@ template glm_echo*(s: string; fg: ForegroundColor; styleSet: set[Style] = {}; ne
   if newline:
     glm_echo ""
 
+
+
+proc isDigit*(str: string): bool =
+  if str.len() == 0: return false
+  for i in str:
+    if not isDigit(i): return false
+  return true
+
 proc reportWarning*(t: Token, source: string, hint: string = "", suppress: bool = false) =
     if suppress:
         return
