@@ -51,22 +51,14 @@ class PostInstallCommand(setuptools.command.install.install, object):
                 os.mkdir(os.path.join(self.install_scripts))
             except Exception as e:
                 pass
-            target = os.path.abspath(
-                os.path.join(self.install_scripts, executable_name)
-            )
+            target = os.path.abspath(os.path.join(self.install_scripts, executable_name))
             if os.path.isfile(target):
                 os.remove(target)
 
             self.move_file(source, target)
 
 
-version = (
-    subprocess.check_output(shlex.split("git describe --tags HEAD"))
-    .decode()
-    .strip()
-    .split("-")[0]
-    .strip("v")
-)
+version = "0.4.1"
 
 if os.getenv("BUILD") == "windows" or platform == "win32":
     ext = "pyd"
