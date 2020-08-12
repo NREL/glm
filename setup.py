@@ -47,6 +47,8 @@ class PostInstallCommand(setuptools.command.install.install, object):
 
         for executable_name in ["glm2json", "json2glm"]:
             source = os.path.join(build_dir, executable_name)
+            if platform.startswith("win"):
+                source += ".exe"
             try:
                 os.mkdir(os.path.join(self.install_scripts))
             except Exception as e:
