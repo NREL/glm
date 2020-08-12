@@ -21,8 +21,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    - name: Install dependencies
+    - name: Install nim dependencies
       run: nimble build -y
+    - name: Install python dependencies
+      run: python -m pip install wheel setuptools
     - name: Build files
       run: nimble release
     - name: Upload artifacts
