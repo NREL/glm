@@ -55,7 +55,6 @@ task debug, "Clean and build debug":
   exec "nimble build"
 
 task release, "Clean and build release":
-  exec "nimble clean"
   when buildOS == "windows":
     exec("""nim c -d:release --opt:size --passc:"-flto" --app:lib --out:lib/_glm.pyd src/glm.nim""")
   else:
