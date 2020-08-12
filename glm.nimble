@@ -27,7 +27,7 @@ bin           = @["glm2json", "json2glm"]
 
 # Dependencies
 
-requires "nim 1.2.0", "cligen 1.1.0", "uuids 0.1.10", "nimpy 0.1.0"
+requires "nim 1.2.6", "cligen 1.1.0", "uuids 0.1.10", "nimpy 0.1.0"
 
 before build:
   rmDir(binDir)
