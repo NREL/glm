@@ -7,15 +7,7 @@ import strformat
 template thisModuleFile: string = instantiationInfo(fullPaths = true).filename
 
 proc getGitVersion*(): string {.compileTime.} =
-    const v = staticExec("git describe --tags HEAD")[1..5]
-    if v == "atal:":
-        const version = thisModuleFile.split(DirSep)[^2].split("-")[^1]
-        if version.split(".").len != 3:
-            return "0.4.1"
-        else:
-            return version
-    else:
-        return v
+  return "0.4.2"
 
 version       = getGitVersion()
 author        = "Dheepak Krishnamurthy"

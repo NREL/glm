@@ -60,7 +60,7 @@ class PostInstallCommand(setuptools.command.install.install, object):
             self.move_file(source, target)
 
 
-version = "0.4.1"
+version = "0.4.2"
 
 if os.getenv("BUILD") == "windows" or platform == "win32":
     ext = "pyd"

@@ -29,6 +29,5 @@ proc dump(data: PyObject, file: string): int {. exportpy, noinline .} =
     writeFile(file, glm)
 
 proc version(): string {. exportpy, noinline .} =
-    const versionString = staticExec("git describe --tags HEAD")
+    const versionString = "v0.4.2"
     return versionString
-
