@@ -112,4 +112,8 @@ setup(
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
     ],
+    extras_require={
+        "tests": ["pytest", "pytest-ordering", "pytest-cov"],
+        "docs": ["mkdocs", "inari[mkdocs]", "mkdocs-material", "black", "pygments", "pymdown-extensions"],
+    },
 )
