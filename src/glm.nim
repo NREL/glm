@@ -16,9 +16,15 @@ proc loads(data: string): PyObject {. exportpy, noinline .} =
     p.walk()
     return pyImport("json").loads($(p.ast.toJson()))
 
-proc load(file: string): PyObject {. exportpy, noinline .} =
-    var data = read_file(file)
-    return loads(data)
+proc load(file: PyObject): PyObject {. exportpy, noinline .} =
+    let py = pyBuiltinsModule()
+    var data = try:
+            py.open(file).read().to(string)
+        except:
+            file.read().to(string)
+    var p = initParser(data)
+    p.walk()
+    return pyImport("json").loads($(p.ast.toJson()))
 
 proc dumps(data: PyObject): string {. exportpy, noinline .} =
     let d = pyImport("json").dumps( data )
