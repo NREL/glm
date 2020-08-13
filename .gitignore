@@ -19,3 +19,8 @@ nimcache/
 dist/
 .mypy_cache/
 
+MANIFEST.in
+build/
+dist/
+glm.egg-info/
+glm/
