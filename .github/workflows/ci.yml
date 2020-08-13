@@ -29,10 +29,10 @@ jobs:
       run: nimble release
     - name: Build python files
       run: nimble package
-    - name: Install python test dependencies
-      run: python -m pip install ".[test]"
-    - name: Install python test dependencies
-      run: pytest -vvv
+    - name: Run python tests
+      run: |
+        python -m pip install pytest pytest-ordering pytest-cov
+        python -m pytest -vvv
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
