@@ -38,16 +38,30 @@ jobs:
       with:
         name: glm
         path: dist/*
+
+  publish-pypi: #this is a separate job, as the upload must run only once, after all wheels have been created
+    needs: [build]
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: glm
+        path: dist/
+
     - name: GitHub Release
-      if: startsWith(github.ref, 'refs/tags/')
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       uses: softprops/action-gh-release@v1
       with:
         files: 'dist/*'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Publish package
+
+    - name: Publish to PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
       with:
         user: __token__
         password: ${{ secrets.PYPI_TOKEN }}
+        packages_dir: ./dist/
