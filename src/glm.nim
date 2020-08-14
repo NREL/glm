@@ -30,9 +30,13 @@ proc dumps(data: PyObject): string {. exportpy, noinline .} =
     let d = pyImport("json").dumps( data )
     parseJson(d.to(string)).toAst().toGlm()
 
-proc dump(data: PyObject, file: string): int {. exportpy, noinline .} =
+proc dump(data: PyObject, file: PyObject): int {. exportpy, noinline .} =
     let glm = dumps(data)
-    writeFile(file, glm)
+    try:
+        writeFile(file.to(string), glm)
+    except:
+        discard file.write(glm)
+    return 0
 
 proc version(): string {. exportpy, noinline .} =
     const versionString = "v0.4.2"

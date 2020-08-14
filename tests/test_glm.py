@@ -3,6 +3,7 @@ import pytest
 import glm
 import json
 import pytest as pt
+import os
 
 
 def test_4node():
@@ -30,7 +31,7 @@ def test_schedules():
 def test_error():
     with pt.raises(Exception):
         # needs semicolon in timezone line
-        p = glm.loads(
+        _ = glm.loads(
             """
                         clock {
                                 timestamp '2000-01-01 0:00:00';
@@ -42,7 +43,7 @@ def test_error():
 
 def test_warning():
     # TODO: raise python warnings
-    p = glm.loads(
+    _ = glm.loads(
         """
                clock {
                        timestamp '2000-01-01 0:00:00';
@@ -69,7 +70,13 @@ def test_powerflow_IEEE_4node_json():
 
     l1 = json.load(open("./tests/data/powerflow_IEEE_4node.json"))
 
-    assert glm.dumps(l1) == open("./tests/data/powerflow_IEEE_4node.glm").read()
+    with open("./tests/data/tmp", "w") as f:
+        glm.dump(l1, f)
+    assert open("./tests/data/tmp").read() == open("./tests/data/powerflow_IEEE_4node.glm").read()
+
+    glm.dump(l1, "./tests/data/tmp")
+    assert open("./tests/data/tmp").read() == open("./tests/data/powerflow_IEEE_4node.glm").read()
+    os.remove("./tests/data/tmp")
 
 
 def test_powerflow_nested():
