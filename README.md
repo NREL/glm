@@ -32,40 +32,6 @@ pip install glm
 
 This also installs the `glm2json` and `json2glm` cli utilities.
 
-### CLI
-
-If you want to use the CLI, you can unzip the file from the releases page for your operating system.
-There will be two executables in the folder, `glm2json` and `json2glm`.
-On Windows, you may have to rename the files to add the `.exe` at the end of the executable in order to run it from a Windows CMD prompt.
-You will be able to run it from a Git Bash prompt without renaming it.
-You can use the following commands to download and unzip the files on the respective operating systems.
-
-**Windows**
-
-```
-export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-windows-amd64.zip"
-unzip glm-windows-amd64.zip
-```
-
-**OSX**
-
-```
-export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-osx-amd64.tar.xz"
-tar -zxvf glm-osx-amd64.tar.xz
-```
-
-**Linux**
-
-```
-export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
-curl -LO "https://github.com/NREL/glm/releases/download/$VERSION/glm-linux-amd64.tar.xz"
-tar -zxvf glm-linux-amd64.tar.xz
-```
-
-The contents of the compressed archive will contain a command line executable, and a module that can be imported into Python.
-
 ## Documentation
 
 You can use this from the command line as follows:
@@ -256,4 +222,3 @@ pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION
 export VERSION=$(curl -s "https://github.com/NREL/glm/releases/latest" | grep -o 'tag/[v.0-9]*' | awk -F/ '{print $2}')
 pip install https://github.com/NREL/glm/releases/download/$VERSION/glm-${VERSION#"v"}-py2.py3-none-manylinux1_x86_64.whl
 ```
-
