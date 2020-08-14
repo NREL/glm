@@ -14,6 +14,14 @@ def test_4node():
     assert l1 == json.load(open("./tests/data/4node.json"))
     assert l2 == json.load(open("./tests/data/powerflow_IEEE_4node.json"))
 
+    with open("./tests/data/4node.glm") as f:
+        l1 = glm.load(f)
+        assert l1 == json.load(open("./tests/data/4node.json"))
+
+    with open("./tests/data/powerflow_IEEE_4node.glm") as f:
+        l2 = glm.load(f)
+        assert l2 == json.load(open("./tests/data/powerflow_IEEE_4node.json"))
+
 
 def test_nested():
     len(glm.load("./tests/data/configuration.glm")) == 7
