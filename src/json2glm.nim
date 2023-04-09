@@ -27,6 +27,7 @@ when isMainModule and appType != "lib":
     import cligen
     import os
     const versionString = staticExec("git describe --tags HEAD")
+    clCfg.version = versionString
     dispatch(json2glm)
 
 

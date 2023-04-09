@@ -45,19 +45,19 @@ class PostInstallCommand(setuptools.command.install.install, object):
         source_dir = os.path.dirname(os.path.abspath(__file__))
         build_dir = os.path.join(source_dir, "bin")
 
-        for executable_name in ["glm2json", "json2glm"]:
-            source = os.path.join(build_dir, executable_name)
-            if platform.startswith("win"):
-                source += ".exe"
-            try:
-                os.mkdir(os.path.join(self.install_scripts))
-            except Exception as e:
-                pass
-            target = os.path.abspath(os.path.join(self.install_scripts, executable_name))
-            if os.path.isfile(target):
-                os.remove(target)
+        # for executable_name in ["glm2json", "json2glm"]:
+        #     source = os.path.join(build_dir, executable_name)
+        #     if platform.startswith("win"):
+        #         source += ".exe"
+        #     try:
+        #         os.mkdir(os.path.join(self.install_scripts))
+        #     except Exception as e:
+        #         pass
+        #     target = os.path.abspath(os.path.join(self.install_scripts, executable_name))
+        #     if os.path.isfile(target):
+        #         os.remove(target)
 
-            self.move_file(source, target)
+        #     self.move_file(source, target)
 
 
 version = "0.4.3"
