@@ -24,6 +24,8 @@ requires "nim 1.6.12", "cligen 1.6.0", "uuids 0.1.11", "nimpy 0.2.0"
 task release, "Clean and build release":
   when buildOS == "windows":
     exec("""nim c -d:release --opt:size --passc:"-flto" --app:lib --out:lib/_glm.pyd src/glm.nim""")
+  elif buildOS == "macosx" and buildCPU == "x86_64":
+    exec("""nim c -d:release --opt:size --cpu:x86_64  --passc:"-flto" --passL:"-flto" --app:lib --out:lib/_glm.so src/glm.nim""")
   elif buildOS == "macosx" and buildCPU == "amd64":
     exec("""nim c -d:release --opt:size --cpu:arm64 --passC:"-flto -target arm64-apple-macos11" --passL:"-flto -target arm64-apple-macos11" --app:lib --out:lib/_glm.so src/glm.nim""")
   else:
