@@ -19,18 +19,22 @@ bin           = @["glm2json", "json2glm"]
 
 # Dependencies
 
-requires "nim 1.2.6", "cligen 1.1.0", "uuids 0.1.10", "nimpy 0.1.0"
+requires "nim 1.6.12", "cligen 1.6.0", "uuids 0.1.11", "nimpy 0.2.0"
 
 task release, "Clean and build release":
   when buildOS == "windows":
     exec("""nim c -d:release --opt:size --passc:"-flto" --app:lib --out:lib/_glm.pyd src/glm.nim""")
+  elif buildOS == "macosx" and buildCPU == "amd64":
+    exec("""nim c -d:release --opt:size --cpu:arm64 --passC:"-flto -target arm64-apple-macos11" --passL:"-flto -target arm64-apple-macos11" --app:lib --out:lib/_glm.so src/glm.nim""")
   else:
     exec("""nim c -d:release --opt:size  --passc:"-flto" --app:lib --out:lib/_glm.so src/glm.nim""")
 
 task package, "Make Python Package":
   when buildOS == "windows":
     exec "python setup.py bdist_wheel --plat-name=win_amd64"
-  elif buildOS == "macosx":
+  elif buildOS == "macosx" and buildCPU == "x86_64":
     exec "python setup.py bdist_wheel --plat-name=macosx_10_7_x86_64"
+  elif buildOS == "macosx" and buildCPU == "amd64":
+    exec "python setup.py bdist_wheel --plat-name=macosx_11_0_arm64"
   else:
     exec "python setup.py bdist_wheel --plat-name=manylinux1_x86_64"

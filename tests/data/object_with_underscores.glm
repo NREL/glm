@@ -1,0 +1,13 @@
+object load  {
+  name "ld_8180106403";
+  parent "_406-143197_N";
+}
+
+object load  {
+  name "ld__8180106403";
+  parent "_406-143197_N";
+  phases ACN;
+  nominal_voltage 120;
+  constant_power_A 80.0+16.2447j;
+  constant_power_C 80.0+16.2447j;
+}

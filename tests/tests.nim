@@ -9,6 +9,12 @@ import json
 when isMainModule:
     import unittest
 
+    suite "test object_with_underscores":
+        test "lexer":
+            var
+                l1 = parse("./tests/data/object_with_underscores.glm").toJson()
+
+
     suite "test lexer":
 
         setup:

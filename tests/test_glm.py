@@ -99,3 +99,7 @@ def test_taxonomy_feeder_R1_12_47_1():
     l1 = glm.load("./tests/data/taxonomy_feeder_R1-12.47-1.glm")
 
     assert l1 == json.load(open("./tests/data/taxonomy_feeder_R1-12.47-1.json"))
+
+
+def test_object_with_underscore():
+    l1 = glm.load("./tests/data/object_with_underscores.glm")
