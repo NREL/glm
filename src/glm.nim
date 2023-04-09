@@ -39,5 +39,5 @@ proc dump(data: PyObject, file: PyObject): int {. exportpy, noinline .} =
     return 0
 
 proc version(): string {. exportpy, noinline .} =
-    const versionString = "v0.4.3"
+    const versionString = "v0.4.4"
     return versionString

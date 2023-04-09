@@ -7,7 +7,7 @@ import strformat
 template thisModuleFile: string = instantiationInfo(fullPaths = true).filename
 
 proc getGitVersion*(): string {.compileTime.} =
-  return "0.4.3"
+  return "0.4.4"
 
 version       = getGitVersion()
 author        = "Dheepak Krishnamurthy"
