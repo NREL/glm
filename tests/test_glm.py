@@ -103,3 +103,26 @@ def test_taxonomy_feeder_R1_12_47_1():
 
 def test_object_with_underscore():
     l1 = glm.load("./tests/data/object_with_underscores.glm")
+    assert l1 == {
+        "clock": {},
+        "includes": [],
+        "objects": [
+            {"name": "load", "attributes": {"name": "ld_8180106403", "parent": "_406-143197_N"}, "children": []},
+            {
+                "name": "load",
+                "attributes": {
+                    "name": "ld__8180106403",
+                    "parent": "_406-143197_N",
+                    "phases": "ACN",
+                    "nominal_voltage": "120",
+                    "constant_power_A": "80.0+16.2447j",
+                    "constant_power_C": "80.0+16.2447j",
+                },
+                "children": [],
+            },
+        ],
+        "modules": [],
+        "directives": [],
+        "definitions": [],
+        "schedules": [],
+    }
