@@ -247,8 +247,6 @@ proc scanToken(lex: var Lexer) =
             lex.addToken(c, tk_doublequote, lex.column_index, lex.column_index, lex.line_index)
         of '=':
             lex.addToken(c, tk_equal, lex.column_index, lex.column_index, lex.line_index)
-        of '_':
-            lex.addToken(c, tk_underscore, lex.column_index, lex.column_index, lex.line_index)
         of '\n':
             lex.addToken(c, tk_newline, lex.column_index, lex.column_index, lex.line_index)
         of ' ':
@@ -256,7 +254,7 @@ proc scanToken(lex: var Lexer) =
         of '\r', '\t':
             discard
         else:
-            if isAlphaNumeric(c):
+            if c.isIdentifier:
                 var s: string
                 s.add(c)
                 while ( not lex.isAtEnd() and lex.peek().isIdentifier ):

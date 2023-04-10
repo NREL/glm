@@ -25,7 +25,6 @@ type
         tk_backslash,
         tk_hash,
         tk_equal,
-        tk_underscore,
         tk_dollar,
         tk_question,
         tk_singlequote,
