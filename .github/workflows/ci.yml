@@ -41,7 +41,7 @@ jobs:
 
   publish-pypi: #this is a separate job, as the upload must run only once, after all wheels have been created
     needs: [build]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
